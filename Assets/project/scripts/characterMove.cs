@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions.Must;
+using UnityEngine.UIElements;
 
 public class characterMove : MonoBehaviour
 {
@@ -100,14 +101,6 @@ public class characterMove : MonoBehaviour
                 }
             }
         }
-        //if (Input.GetAxisRaw(axis) != 0)
-        //{
-        //    magnitude *= Input.GetAxisRaw(axis);
-        //}
-        //if (velocity != 0)
-        //{
-        //    magnitude *= previousDirection;
-        //}
         return velocity;
     }
 
@@ -118,20 +111,32 @@ public class characterMove : MonoBehaviour
         float xDistance = Collider.bounds.extents.x + skinDepth;
         float yDistance = Collider.bounds.extents.y + skinDepth;
         float zDistance = Collider.bounds.extents.z + skinDepth;
-        if (Physics.Raycast(transform.position, Vector3.right, xDistance) || Physics.Raycast(transform.position, Vector3.left, xDistance))
+
+        if (Physics.Raycast(transform.position, transform.right, xDistance))
         {
-            Debug.Log("Forwards/Backwards");
-            speedX = 0;
+            speedX = Mathf.Min(0, speedX);
         }
-        if (Physics.Raycast(transform.position, Vector3.down, yDistance) || Physics.Raycast(transform.position, Vector3.up, yDistance))
+        if(Physics.Raycast(transform.position, -transform.right, xDistance))
         {
-            Debug.Log("Top/Bottom");
-            speedY = 0;
+            speedX = Mathf.Max(0, speedX);
         }
-        if (Physics.Raycast(transform.position, Vector3.forward, zDistance) || Physics.Raycast(transform.position, Vector3.back, zDistance))
+
+        if (Physics.Raycast(transform.position, transform.up, yDistance))
         {
-            Debug.Log("Right/Left");
-            speedZ = 0;
+            speedY = Mathf.Min(0, speedY);
+        }
+        if (Physics.Raycast(transform.position, -transform.up, yDistance))
+        {
+            speedY = Mathf.Max(0, speedY);
+        }
+
+        if (Physics.Raycast(transform.position, transform.forward, zDistance))
+        {
+            speedZ = Mathf.Min(0, speedZ);
+        }
+        if (Physics.Raycast(transform.position, -transform.forward, zDistance))
+        {
+            speedZ = Mathf.Max(0, speedZ);
         }
     }
 }
