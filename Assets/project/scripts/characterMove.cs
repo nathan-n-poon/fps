@@ -20,7 +20,6 @@ public class characterMove : MonoBehaviour
     float speedX;
     float speedY;
     float speedZ;
-    public bool isGrounded;
 
     // Start is called before the first frame update
     void Start()
@@ -53,13 +52,13 @@ public class characterMove : MonoBehaviour
         Vector3 speed = Vector3.zero;
 
         speedX = accelerate("Horizontal");
-        //Debug.Log("speedX is: ");
-        Debug.Log(speedX);
         speedZ = accelerate("Vertical");
+
+        speedY += gravity * Time.deltaTime;
 
         checkCollisions();
 
-        speed = (transform.right * speedX + transform.forward * speedZ).normalized;
+        speed = (transform.right * speedX + transform.forward * speedZ).normalized + transform.up * speedY;
 
         m_Rigidbody.MovePosition(m_Rigidbody.position + (speed) * Time.deltaTime);
 
@@ -70,7 +69,11 @@ public class characterMove : MonoBehaviour
 
     }
     float accelerate(string axis)
-    {
+    { 
+        if (!checkCollisions())
+        {
+            return 0;
+        }
         float velocity = (axis == "Horizontal") ? speedX : speedZ;
         float magnitude = Mathf.Abs(velocity);
         float currentDirection = Input.GetAxisRaw(axis);
@@ -104,8 +107,9 @@ public class characterMove : MonoBehaviour
         return velocity;
     }
 
-    void checkCollisions()
+    bool checkCollisions()
     {
+        bool isGrounded = false;
         //float DisstanceToTheGround = Collider.bounds.extents.y;   
         //return Physics.Raycast(transform.position, Vector3.down, DisstanceToTheGround + 0.1f);
         float xDistance = Collider.bounds.extents.x + skinDepth;
@@ -124,10 +128,14 @@ public class characterMove : MonoBehaviour
         if (Physics.Raycast(transform.position, transform.up, yDistance))
         {
             speedY = Mathf.Min(0, speedY);
+            isGrounded = true;
+            Debug.Log("pootis");
         }
         if (Physics.Raycast(transform.position, -transform.up, yDistance))
         {
             speedY = Mathf.Max(0, speedY);
+            isGrounded = true;
+            Debug.Log("pootis");
         }
 
         if (Physics.Raycast(transform.position, transform.forward, zDistance))
@@ -138,5 +146,7 @@ public class characterMove : MonoBehaviour
         {
             speedZ = Mathf.Max(0, speedZ);
         }
+
+        return isGrounded;
     }
 }
