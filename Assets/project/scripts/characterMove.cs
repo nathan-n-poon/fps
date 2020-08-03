@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions.Must;
 
 public class characterMove : MonoBehaviour
 {
@@ -23,6 +24,7 @@ public class characterMove : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //
         //
         //
     }
@@ -56,7 +58,7 @@ public class characterMove : MonoBehaviour
 
         checkCollisions();
 
-        speed = transform.right * speedX + transform.forward * speedZ;
+        speed = (transform.right * speedX + transform.forward * speedZ).normalized;
 
         m_Rigidbody.MovePosition(m_Rigidbody.position + (speed) * Time.deltaTime);
 
@@ -70,6 +72,7 @@ public class characterMove : MonoBehaviour
     {
         float velocity = (axis == "Horizontal") ? speedX : speedZ;
         float magnitude = Mathf.Abs(velocity);
+        float currentDirection = Input.GetAxisRaw(axis);
         float previousDirection = 0;
         float accel = walkAccel * Time.deltaTime;
 
@@ -78,24 +81,34 @@ public class characterMove : MonoBehaviour
             previousDirection = velocity / magnitude;
         }
 
-        if (Input.GetAxisRaw(axis) != 0 && Input.GetAxisRaw(axis) != -previousDirection)
+        if (currentDirection != 0)
         {
-            magnitude += accel;
+            velocity += accel * currentDirection;
+            if(Mathf.Abs(velocity) > maxSpeed)
+            {
+                velocity = maxSpeed * currentDirection;
+            }
         }
         else
         {
-            magnitude -= accel;
+            velocity -= accel * previousDirection;
+            if(magnitude != 0)
+            {
+                if(velocity / Math.Abs(velocity) != previousDirection )
+                {
+                    velocity = 0;
+                }
+            }
         }
-        magnitude = Mathf.Clamp(magnitude, 0f, maxSpeed);
         //if (Input.GetAxisRaw(axis) != 0)
         //{
         //    magnitude *= Input.GetAxisRaw(axis);
         //}
-        if (velocity != 0)
-        {
-            magnitude *= previousDirection;
-        }
-        return magnitude;
+        //if (velocity != 0)
+        //{
+        //    magnitude *= previousDirection;
+        //}
+        return velocity;
     }
 
     void checkCollisions()
