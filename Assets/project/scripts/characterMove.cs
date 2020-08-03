@@ -54,6 +54,8 @@ public class characterMove : MonoBehaviour
         speedX = accelerate("Horizontal");
         speedZ = accelerate("Vertical");
 
+        Debug.Log(speedZ);
+
         speedY += gravity * Time.deltaTime;
 
         checkCollisions();
@@ -70,10 +72,6 @@ public class characterMove : MonoBehaviour
     }
     float accelerate(string axis)
     { 
-        if (!checkCollisions())
-        {
-            return 0;
-        }
         float velocity = (axis == "Horizontal") ? speedX : speedZ;
         float magnitude = Mathf.Abs(velocity);
         float currentDirection = Input.GetAxisRaw(axis);
@@ -85,7 +83,7 @@ public class characterMove : MonoBehaviour
             previousDirection = velocity / magnitude;
         }
 
-        if (currentDirection != 0)
+        if (currentDirection != 0 && checkCollisions())
         {
             velocity += accel * currentDirection;
             if(Mathf.Abs(velocity) > maxSpeed)
@@ -129,13 +127,11 @@ public class characterMove : MonoBehaviour
         {
             speedY = Mathf.Min(0, speedY);
             isGrounded = true;
-            Debug.Log("pootis");
         }
         if (Physics.Raycast(transform.position, -transform.up, yDistance))
         {
             speedY = Mathf.Max(0, speedY);
             isGrounded = true;
-            Debug.Log("pootis");
         }
 
         if (Physics.Raycast(transform.position, transform.forward, zDistance))
