@@ -58,13 +58,14 @@ public class characterMove : MonoBehaviour
 
         downAxisSpeed += gravity * Time.deltaTime;
 
-        speed = (transform.right * speedX + transform.forward * speedZ).normalized * maxSpeed + downAxis * downAxisSpeed;
-
-        if(checkCollisions() && downAxis == -transform.up)
+        if (checkCollisions() && downAxis == -transform.up)
         {
             //Debug.Log(speed.x);
             downAxisSpeed = 0;
         }
+
+        speed = (transform.right * speedX + transform.forward * speedZ).normalized * maxSpeed + downAxis * downAxisSpeed;
+
         Debug.Log(speed.x);
         //Debug.Log("after collision, speed.y is: " + speed.y);
 
@@ -121,32 +122,32 @@ public class characterMove : MonoBehaviour
 
         if (Physics.Raycast(transform.position, transform.right, xDistance))
         {
-            speed.x = Mathf.Min(0, speed.x);
+            speedX = Mathf.Min(0, speedX);
         }
         if(Physics.Raycast(transform.position, -transform.right, xDistance))
         {
-            speed.x = Mathf.Max(0, speed.x);
+            speedX = Mathf.Max(0, speedX);
         }
 
         if (Physics.Raycast(transform.position, transform.up, yDistance))
         {
-            speed.y = Mathf.Min(0, speed.y);
+            speedY = Mathf.Min(0, speedY);
             isGrounded = true;
         }
         if (Physics.Raycast(transform.position, -transform.up, yDistance))
         {
-            speed.y = Mathf.Max(0, speed.y);
+            speedY = Mathf.Max(0, speedY);
             isGrounded = true;
             //Debug.Log("in collision, speed.y is: "+ speed.y);
         }
 
         if (Physics.Raycast(transform.position, transform.forward, zDistance))
         {
-            speed.z = Mathf.Min(0, speedZ);
+            speedZ = Mathf.Min(0, speedZ);
         }
         if (Physics.Raycast(transform.position, -transform.forward, zDistance))
         {
-            speed.z = Mathf.Max(0, speedZ);
+            speedZ = Mathf.Max(0, speedZ);
         }
 
         return isGrounded;
