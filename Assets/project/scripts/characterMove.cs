@@ -12,14 +12,16 @@ public class characterMove : MonoBehaviour
 
     public float maxSpeed = 4f;
     public float walkAccel = 1f;
-    public float gravity = -10f;
+    public float gravity = 10f;
     public float skinDepth = 0.3f;
 
-
+    Vector3 downAxis = new Vector3(0,-1,0);
     Vector3 speed;
     float speedX;
     float speedY;
     float speedZ;
+
+    float downAxisSpeed;
 
     // Start is called before the first frame update
     void Start()
@@ -49,18 +51,22 @@ public class characterMove : MonoBehaviour
 
 
         //dx = (v + a/2*t) * t
-        Vector3 speed = Vector3.zero;
 
         speedX = accelerate("Horizontal");
         speedZ = accelerate("Vertical");
+        
 
-        Debug.Log(speedZ);
+        downAxisSpeed += gravity * Time.deltaTime;
 
-        speedY += gravity * Time.deltaTime;
+        speed = (transform.right * speedX + transform.forward * speedZ).normalized * maxSpeed + downAxis * downAxisSpeed;
 
-        checkCollisions();
-
-        speed = (transform.right * speedX + transform.forward * speedZ).normalized + transform.up * speedY;
+        if(checkCollisions() && downAxis == -transform.up)
+        {
+            //Debug.Log(speed.x);
+            downAxisSpeed = 0;
+        }
+        Debug.Log(speed.x);
+        //Debug.Log("after collision, speed.y is: " + speed.y);
 
         m_Rigidbody.MovePosition(m_Rigidbody.position + (speed) * Time.deltaTime);
 
@@ -115,31 +121,32 @@ public class characterMove : MonoBehaviour
 
         if (Physics.Raycast(transform.position, transform.right, xDistance))
         {
-            speedX = Mathf.Min(0, speedX);
+            speed.x = Mathf.Min(0, speed.x);
         }
         if(Physics.Raycast(transform.position, -transform.right, xDistance))
         {
-            speedX = Mathf.Max(0, speedX);
+            speed.x = Mathf.Max(0, speed.x);
         }
 
         if (Physics.Raycast(transform.position, transform.up, yDistance))
         {
-            speedY = Mathf.Min(0, speedY);
+            speed.y = Mathf.Min(0, speed.y);
             isGrounded = true;
         }
         if (Physics.Raycast(transform.position, -transform.up, yDistance))
         {
-            speedY = Mathf.Max(0, speedY);
+            speed.y = Mathf.Max(0, speed.y);
             isGrounded = true;
+            //Debug.Log("in collision, speed.y is: "+ speed.y);
         }
 
         if (Physics.Raycast(transform.position, transform.forward, zDistance))
         {
-            speedZ = Mathf.Min(0, speedZ);
+            speed.z = Mathf.Min(0, speedZ);
         }
         if (Physics.Raycast(transform.position, -transform.forward, zDistance))
         {
-            speedZ = Mathf.Max(0, speedZ);
+            speed.z = Mathf.Max(0, speedZ);
         }
 
         return isGrounded;
