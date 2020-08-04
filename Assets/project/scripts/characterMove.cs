@@ -91,17 +91,16 @@ public class characterMove : MonoBehaviour
                 velocity = maxSpeed * currentDirection;
             }
         }
-        else
+
+        velocity -= accel * previousDirection / 2;
+        if(magnitude != 0)
         {
-            velocity -= accel * previousDirection;
-            if(magnitude != 0)
+            if(velocity / Math.Abs(velocity) != previousDirection )
             {
-                if(velocity / Math.Abs(velocity) != previousDirection )
-                {
-                    velocity = 0;
-                }
+                velocity = 0;
             }
         }
+        
         return velocity;
     }
 
