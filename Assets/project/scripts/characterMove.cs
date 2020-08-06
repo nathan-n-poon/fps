@@ -22,12 +22,16 @@ public class characterMove : MonoBehaviour
     float speedZ;
     bool shouldOrient = false;
     ContactPoint contact = new ContactPoint();
+    Collider previousSurface = new Collider();
 
     float downAxisSpeed;
+
+    int count = 0;
 
     // Start is called before the first frame update
     void Start()
     {
+        Time.timeScale = 1.0f;   
         //
         //
         //
@@ -62,10 +66,11 @@ public class characterMove : MonoBehaviour
 
         if(shouldOrient)
         {
-            shouldOrient = false;
-            transform.position = contact.normal + contact.point;
-            transform.rotation = Quaternion.FromToRotation(transform.eulerAngles, contact.normal) * Quaternion.Euler(transform.eulerAngles);
-
+            count++;
+                shouldOrient = false;
+                transform.position = contact.normal + contact.point;
+                transform.rotation = Quaternion.FromToRotation(transform.up, contact.normal) * transform.rotation;
+           
         }
 
         if (checkCollisions() && downAxis == -transform.up)
@@ -170,9 +175,13 @@ public class characterMove : MonoBehaviour
     }
     void OnCollisionEnter(Collision other)
     {
-        shouldOrient = true;
-        //print("Points colliding: " + other.contacts.Length);
-        //print("First normal of the point that collide: " + other.contacts[0].point);
-        contact = other.contacts[0];
+        if(other.collider != previousSurface)
+        {
+            shouldOrient = true;
+            //print("Points colliding: " + other.contacts.Length);
+            //print("First normal of the point that collide: " + other.contacts[0].point);
+            contact = other.GetContact(0);
+        }
+        previousSurface = other.collider;
     }
 }
