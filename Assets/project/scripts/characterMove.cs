@@ -63,8 +63,9 @@ public class characterMove : MonoBehaviour
         if(shouldOrient)
         {
             shouldOrient = false;
-            transform.rotation = Quaternion.FromToRotation(transform.up, contact.normal);
-            transform.position = contact.normal + contact.point; 
+            transform.position = contact.normal + contact.point;
+            transform.rotation = Quaternion.FromToRotation(transform.eulerAngles, contact.normal) * Quaternion.Euler(transform.eulerAngles);
+
         }
 
         if (checkCollisions() && downAxis == -transform.up)
