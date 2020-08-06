@@ -17,12 +17,11 @@ public class surfaceOrient : MonoBehaviour
     {
         
     }
-    void OnCollisionEnter(Collision other)
-    {
-        print("Points colliding: " + other.contacts.Length);
-        print("First normal of the point that collide: " + other.contacts[0].normal);
-        m_Rigidbody.MoveRotation(Quaternion.Euler(other.contacts[0].normal));
-        transform.rotation = Quaternion.FromToRotation(Vector3.up, other.contacts[0].normal);
-
-    }
+    //void OnCollisionEnter(Collision other)
+    //{
+    //    print("Points colliding: " + other.contacts.Length);
+    //    print("First normal of the point that collide: " + other.contacts[0].normal);
+    //    m_Rigidbody.MoveRotation(Quaternion.Euler(other.contacts[0].normal));
+    //    transform.rotation = Quaternion.FromToRotation(transform.up, other.contacts[0].normal);
+    //}
 }

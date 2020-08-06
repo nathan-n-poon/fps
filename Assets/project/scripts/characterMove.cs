@@ -20,6 +20,8 @@ public class characterMove : MonoBehaviour
     float speedX;
     float speedY;
     float speedZ;
+    bool shouldOrient = false;
+    ContactPoint contact = new ContactPoint();
 
     float downAxisSpeed;
 
@@ -57,6 +59,13 @@ public class characterMove : MonoBehaviour
         
 
         downAxisSpeed += gravity * Time.deltaTime;
+
+        if(shouldOrient)
+        {
+            shouldOrient = false;
+            transform.rotation = Quaternion.FromToRotation(transform.up, contact.normal);
+            transform.position = contact.normal + contact.point; 
+        }
 
         if (checkCollisions() && downAxis == -transform.up)
         {
@@ -157,5 +166,12 @@ public class characterMove : MonoBehaviour
         }
 
         return isGrounded;
+    }
+    void OnCollisionEnter(Collision other)
+    {
+        shouldOrient = true;
+        //print("Points colliding: " + other.contacts.Length);
+        //print("First normal of the point that collide: " + other.contacts[0].point);
+        contact = other.contacts[0];
     }
 }
