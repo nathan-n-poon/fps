@@ -64,9 +64,15 @@ public class characterMove : MonoBehaviour
             downAxisSpeed = 0;
         }
 
-        speed = (transform.right * speedX + transform.forward * speedZ).normalized * maxSpeed + downAxis * downAxisSpeed;
+        speed = (transform.right * speedX + transform.forward * speedZ);
 
-        Debug.Log(speed.x);
+        if ((transform.right * speedX + transform.forward * speedZ).magnitude > 1)
+        {
+            speed = (transform.right * speedX + transform.forward * speedZ).normalized;
+        }
+        speed = speed * maxSpeed + downAxis * downAxisSpeed;
+
+        //Debug.Log(speed.magnitude);
         //Debug.Log("after collision, speed.y is: " + speed.y);
 
         m_Rigidbody.MovePosition(m_Rigidbody.position + (speed) * Time.deltaTime);
