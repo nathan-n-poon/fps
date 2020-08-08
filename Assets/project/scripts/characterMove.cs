@@ -12,17 +12,22 @@ public class characterMove : MonoBehaviour
 
     public float maxSpeed = 4f;
     public float walkAccel = 1f;
-    public float gravity = 10f;
+    public float gravity =- 10f;
     public float skinDepth = 0.3f;
+    public float mu = 0.15f;
+    public float mass = 10f;
 
-    Vector3 downAxis = new Vector3(0,-1,0);
+    Vector3 downAxis = new Vector3(0,1,0);
+    Vector3 slideDirection = new Vector3(0,0,0);
     Vector3 speed;
     float speedX;
     float speedY;
     float speedZ;
+    float slopeSpeed = 0;
     bool shouldOrient = false;
     ContactPoint contact = new ContactPoint();
     Collider previousSurface = new Collider();
+    float slopeAcceleration;
 
     float downAxisSpeed;
 
@@ -40,55 +45,44 @@ public class characterMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //x = Input.GetAxis("Horizontal");
-        //z = Input.GetAxis("Vertical");
-        //Vector3 move = transform.right * x + transform.forward * z;
-
-        //isGrounded = checkGround();
-        ////deltaY.y += gravity * Time.deltaTime;
-        //if (isGrounded)
-        //{
-        //    deltaY.y = 0;
-        //}
-
-        //m_Rigidbody.MovePosition(m_Rigidbody.position + (move + deltaY) * Speed * Time.deltaTime);
-
-        //--------------------------------------------------------------------------------------------------
-
-
-        //dx = (v + a/2*t) * t
-
-        speedX = accelerate("Horizontal");
-        speedZ = accelerate("Vertical");
-        
-
-        downAxisSpeed += gravity * Time.deltaTime;
-
         if(shouldOrient)
         {
             count++;
-                shouldOrient = false;
-                transform.position = contact.normal + contact.point;
-                transform.rotation = Quaternion.FromToRotation(transform.up, contact.normal) * transform.rotation;
-           
+            shouldOrient = false;
+            transform.position = contact.normal + contact.point;
+            transform.rotation = Quaternion.FromToRotation(transform.up, contact.normal) * transform.rotation;
+
+            Debug.Log(transform.InverseTransformDirection(downAxis));
         }
 
-        if (checkCollisions() && downAxis == -transform.up)
-        {
-            //Debug.Log(speed.x);
-            downAxisSpeed = 0;
-        }
+        checkCollisions();
 
+        speedX = accelerate("Horizontal");
+        speedZ = accelerate("Vertical");
         speed = (transform.right * speedX + transform.forward * speedZ);
-
         if ((transform.right * speedX + transform.forward * speedZ).magnitude > 1)
         {
             speed = (transform.right * speedX + transform.forward * speedZ).normalized;
         }
-        speed = speed * maxSpeed + downAxis * downAxisSpeed;
 
-        //Debug.Log(speed.magnitude);
-        //Debug.Log("after collision, speed.y is: " + speed.y);
+        downAxisSpeed += gravity * Time.deltaTime;
+        if (isGrounded())
+        {
+            downAxisSpeed = 0;
+        }
+
+        slopeSpeed += slopeAcceleration * Time.deltaTime;
+        if (downAxis == transform.up || !isGrounded())
+        {
+            slopeSpeed = 0;
+        }
+
+
+        //Debug.Log(slopeSpeed);
+
+
+
+        speed = speed * maxSpeed + downAxis * downAxisSpeed + slideDirection * slopeSpeed;
 
         m_Rigidbody.MovePosition(m_Rigidbody.position + (speed) * Time.deltaTime);
 
@@ -98,6 +92,56 @@ public class characterMove : MonoBehaviour
     {
 
     }
+
+    void OnCollisionEnter(Collision other)
+    {
+        if (other.collider != previousSurface)
+        {
+            shouldOrient = true;
+            //print("Points colliding: " + other.contacts.Length);
+            //print("First normal of the point that collide: " + other.contacts[0].point);
+            contact = other.GetContact(0);
+            setSlopeSpeed();
+        }
+        previousSurface = other.collider;
+    }
+
+    void checkCollisions()
+    {
+        //float DisstanceToTheGround = Collider.bounds.extents.y;   
+        //return Physics.Raycast(transform.position, Vector3.down, DisstanceToTheGround + 0.1f);
+        float xDistance = Collider.bounds.extents.x + skinDepth;
+        float yDistance = Collider.bounds.extents.y + skinDepth;
+        float zDistance = Collider.bounds.extents.z + skinDepth;
+
+        if (Physics.Raycast(transform.position, transform.right, xDistance))
+        {
+            speedX = Mathf.Min(0, speedX);
+        }
+        if (Physics.Raycast(transform.position, -transform.right, xDistance))
+        {
+            speedX = Mathf.Max(0, speedX);
+        }
+
+        if (Physics.Raycast(transform.position, transform.up, yDistance))
+        {
+            speedY = Mathf.Min(0, speedY);
+        }
+        if (Physics.Raycast(transform.position, -transform.up, yDistance))
+        {
+            speedY = Mathf.Max(0, speedY);
+        }
+
+        if (Physics.Raycast(transform.position, transform.forward, zDistance))
+        {
+            speedZ = Mathf.Min(0, speedZ);
+        }
+        if (Physics.Raycast(transform.position, -transform.forward, zDistance))
+        {
+            speedZ = Mathf.Max(0, speedZ);
+        }
+    }
+
     float accelerate(string axis)
     { 
         float velocity = (axis == "Horizontal") ? speedX : speedZ;
@@ -111,8 +155,9 @@ public class characterMove : MonoBehaviour
             previousDirection = velocity / magnitude;
         }
 
-        if (currentDirection != 0 && checkCollisions())
+        if (currentDirection != 0 && isGrounded())
         {
+            Debug.Log("nein");
             velocity += accel * currentDirection;
             if(Mathf.Abs(velocity) > maxSpeed)
             {
@@ -132,56 +177,31 @@ public class characterMove : MonoBehaviour
         return velocity;
     }
 
-    bool checkCollisions()
+    bool isGrounded()
     {
         bool isGrounded = false;
-        //float DisstanceToTheGround = Collider.bounds.extents.y;   
-        //return Physics.Raycast(transform.position, Vector3.down, DisstanceToTheGround + 0.1f);
-        float xDistance = Collider.bounds.extents.x + skinDepth;
-        float yDistance = Collider.bounds.extents.y + skinDepth;
-        float zDistance = Collider.bounds.extents.z + skinDepth;
-
-        if (Physics.Raycast(transform.position, transform.right, xDistance))
-        {
-            speedX = Mathf.Min(0, speedX);
-        }
-        if(Physics.Raycast(transform.position, -transform.right, xDistance))
-        {
-            speedX = Mathf.Max(0, speedX);
-        }
+        float yDistance = Collider.bounds.extents.y + skinDepth + 0.2f;
 
         if (Physics.Raycast(transform.position, transform.up, yDistance))
         {
-            speedY = Mathf.Min(0, speedY);
             isGrounded = true;
         }
         if (Physics.Raycast(transform.position, -transform.up, yDistance))
         {
-            speedY = Mathf.Max(0, speedY);
             isGrounded = true;
-            //Debug.Log("in collision, speed.y is: "+ speed.y);
         }
-
-        if (Physics.Raycast(transform.position, transform.forward, zDistance))
-        {
-            speedZ = Mathf.Min(0, speedZ);
-        }
-        if (Physics.Raycast(transform.position, -transform.forward, zDistance))
-        {
-            speedZ = Mathf.Max(0, speedZ);
-        }
-
         return isGrounded;
     }
-    void OnCollisionEnter(Collision other)
+
+    void setSlopeSpeed()
     {
-        if(other.collider != previousSurface)
-        {
-            shouldOrient = true;
-            //print("Points colliding: " + other.contacts.Length);
-            //print("First normal of the point that collide: " + other.contacts[0].point);
-            contact = other.GetContact(0);
-        }
-        previousSurface = other.collider;
+        //if (isGrounded())
+        //{
+        //slideDirection = new Vector3(0.7f, 0.7f, 0f);
+        slideDirection = -(contact.normal - downAxis);
+        float theta = Vector3.Angle(contact.normal, downAxis);
+            slopeAcceleration = gravity * (Mathf.Sin(theta) - Mathf.Cos(theta) * mu);
+        //}
     }
+
 }

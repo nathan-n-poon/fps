@@ -539,7 +539,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 412603443}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -4, y: 2, z: 1}
+  m_LocalPosition: {x: 7.17, y: 7.75, z: 0.52}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 46594152}
@@ -576,8 +576,10 @@ MonoBehaviour:
   Collider: {fileID: 412603444}
   maxSpeed: 3
   walkAccel: 1
-  gravity: 1
+  gravity: -1
   skinDepth: 0
+  mu: 0.85
+  mass: 0.1
 --- !u!1 &652353785
 GameObject:
   m_ObjectHideFlags: 0
