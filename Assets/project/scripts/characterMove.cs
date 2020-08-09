@@ -21,18 +21,11 @@ public class characterMove : MonoBehaviour
     Vector3 relativeDownAxis = new Vector3();
     Vector3 relativeSpeed = new Vector3();
     Vector3 speed;
-    float speedX;
-    float speedY;
-    float speedZ;
-    float slopeSpeed = 0;
     bool shouldOrient = false;
     ContactPoint contact = new ContactPoint();
     Collider previousSurface = new Collider();
-    float slopeAcceleration;
 
     float downAxisSpeed;
-
-    int count = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -48,7 +41,6 @@ public class characterMove : MonoBehaviour
     {
         if(shouldOrient)
         {
-            count++;
             shouldOrient = false;
             transform.position = contact.normal + contact.point;
             transform.rotation = Quaternion.FromToRotation(transform.up, contact.normal) * transform.rotation;
@@ -60,7 +52,7 @@ public class characterMove : MonoBehaviour
         relativeSpeed.z = accelerate("Vertical");
 
         downAxisSpeed += gravity * Time.deltaTime;
-        if (isGrounded())
+        if (isGrounded() && transform.up == downAxis)
         {
             downAxisSpeed = 0;
         }
@@ -70,15 +62,16 @@ public class characterMove : MonoBehaviour
 
         checkCollisions();
 
-        if ((transform.right * speedX + transform.forward * speedZ).magnitude > 1)
+        if ((transform.right * relativeSpeed.x + transform.forward * relativeSpeed.z).magnitude > 1)
         {
-            speed = (transform.right * speedX + transform.forward * speedZ).normalized + transform.up * relativeSpeed.z;
+            speed = (transform.right * relativeSpeed.x + transform.forward * relativeSpeed.z).normalized;
         }
-
         else
         {
-            speed = (transform.right * relativeSpeed.x + transform.up * relativeSpeed.y + transform.forward * relativeSpeed.z);
+            speed = (transform.right * relativeSpeed.x + transform.forward * relativeSpeed.z);
         }
+
+        speed = speed * maxSpeed + transform.up * relativeSpeed.y;
 
         m_Rigidbody.MovePosition(m_Rigidbody.position + (speed) * Time.deltaTime);
 
@@ -139,7 +132,7 @@ public class characterMove : MonoBehaviour
 
     float accelerate(string axis)
     { 
-        float velocity = (axis == "Horizontal") ? speedX : speedZ;
+        float velocity = (axis == "Horizontal") ? relativeSpeed.x : relativeSpeed.z;
         float magnitude = Mathf.Abs(velocity);
         float currentDirection = Input.GetAxisRaw(axis);
         float previousDirection = 0;
