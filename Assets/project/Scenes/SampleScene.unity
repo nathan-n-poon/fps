@@ -577,9 +577,7 @@ MonoBehaviour:
   maxSpeed: 3
   walkAccel: 1
   gravity: -1
-  skinDepth: 0.2
-  mu: 0.85
-  mass: 0.1
+  skinDepth: 0
 --- !u!1 &652353785
 GameObject:
   m_ObjectHideFlags: 0
