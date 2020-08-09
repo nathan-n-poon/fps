@@ -18,7 +18,8 @@ public class characterMove : MonoBehaviour
     public float mass = 10f;
 
     Vector3 downAxis = new Vector3(0,1,0);
-    Vector3 slideDirection = new Vector3(0,0,0);
+    Vector3 relativeDownAxis = new Vector3();
+    Vector3 relativeSpeed = new Vector3();
     Vector3 speed;
     float speedX;
     float speedY;
@@ -55,15 +56,8 @@ public class characterMove : MonoBehaviour
             Debug.Log(transform.InverseTransformDirection(downAxis));
         }
 
-        checkCollisions();
-
-        speedX = accelerate("Horizontal");
-        speedZ = accelerate("Vertical");
-        speed = (transform.right * speedX + transform.forward * speedZ);
-        if ((transform.right * speedX + transform.forward * speedZ).magnitude > 1)
-        {
-            speed = (transform.right * speedX + transform.forward * speedZ).normalized;
-        }
+        relativeSpeed.x = accelerate("Horizontal");
+        relativeSpeed.z = accelerate("Vertical");
 
         downAxisSpeed += gravity * Time.deltaTime;
         if (isGrounded())
@@ -71,18 +65,20 @@ public class characterMove : MonoBehaviour
             downAxisSpeed = 0;
         }
 
-        slopeSpeed += slopeAcceleration * Time.deltaTime;
-        if (downAxis == transform.up || !isGrounded())
+        relativeDownAxis = transform.InverseTransformDirection(downAxis);
+        relativeSpeed += relativeDownAxis * downAxisSpeed;
+
+        checkCollisions();
+
+        if ((transform.right * speedX + transform.forward * speedZ).magnitude > 1)
         {
-            slopeSpeed = 0;
+            speed = (transform.right * speedX + transform.forward * speedZ).normalized + transform.up * relativeSpeed.z;
         }
 
-
-        //Debug.Log(slopeSpeed);
-
-
-
-        speed = speed * maxSpeed + downAxis * downAxisSpeed + slideDirection * slopeSpeed;
+        else
+        {
+            speed = (transform.right * relativeSpeed.x + transform.up * relativeSpeed.y + transform.forward * relativeSpeed.z);
+        }
 
         m_Rigidbody.MovePosition(m_Rigidbody.position + (speed) * Time.deltaTime);
 
@@ -101,7 +97,6 @@ public class characterMove : MonoBehaviour
             //print("Points colliding: " + other.contacts.Length);
             //print("First normal of the point that collide: " + other.contacts[0].point);
             contact = other.GetContact(0);
-            setSlopeSpeed();
         }
         previousSurface = other.collider;
     }
@@ -116,29 +111,29 @@ public class characterMove : MonoBehaviour
 
         if (Physics.Raycast(transform.position, transform.right, xDistance))
         {
-            speedX = Mathf.Min(0, speedX);
+            relativeSpeed.x = Mathf.Min(0, relativeSpeed.x);
         }
         if (Physics.Raycast(transform.position, -transform.right, xDistance))
         {
-            speedX = Mathf.Max(0, speedX);
+            relativeSpeed.x = Mathf.Max(0, relativeSpeed.x);
         }
 
         if (Physics.Raycast(transform.position, transform.up, yDistance))
         {
-            speedY = Mathf.Min(0, speedY);
+            relativeSpeed.y = Mathf.Min(0, relativeSpeed.y);
         }
         if (Physics.Raycast(transform.position, -transform.up, yDistance))
         {
-            speedY = Mathf.Max(0, speedY);
+            relativeSpeed.y = Mathf.Max(0, relativeSpeed.y);
         }
 
         if (Physics.Raycast(transform.position, transform.forward, zDistance))
         {
-            speedZ = Mathf.Min(0, speedZ);
+            relativeSpeed.z = Mathf.Min(0, relativeSpeed.z);
         }
         if (Physics.Raycast(transform.position, -transform.forward, zDistance))
         {
-            speedZ = Mathf.Max(0, speedZ);
+            relativeSpeed.z = Mathf.Max(0, relativeSpeed.z);
         }
     }
 
@@ -192,16 +187,4 @@ public class characterMove : MonoBehaviour
         }
         return isGrounded;
     }
-
-    void setSlopeSpeed()
-    {
-        //if (isGrounded())
-        //{
-        //slideDirection = new Vector3(0.7f, 0.7f, 0f);
-        slideDirection = -(contact.normal - downAxis);
-        float theta = Vector3.Angle(contact.normal, downAxis);
-            slopeAcceleration = gravity * (Mathf.Sin(theta) - Mathf.Cos(theta) * mu);
-        //}
-    }
-
 }
