@@ -47,11 +47,16 @@ public class characterMove : MonoBehaviour
 
         //get current downAxis, transfrom into vector relative to player transform, and add gravity's speed in that direction 
         downAxisSpeed += gravity * Time.deltaTime;
-        effectiveGravity = relativeDownAxis * downAxisSpeed;
+        effectiveGravity = relativeDownAxis * gravity;
         checkCollisions(ref effectiveGravity);
-        if (isGrounded() && effectiveGravity.magnitude < Mathf.Abs(gravity) / 2)
+        if (isGrounded() && effectiveGravity.magnitude < Mathf.Abs(gravity) / 1.5)
         {
+            //Debug.Log("nani");
             downAxisSpeed *= 0.5f;
+        }
+        else if (isGrounded())
+        {
+            downAxisSpeed *= 0.8f;
         }
         relativeSpeed += relativeDownAxis * downAxisSpeed;
 
@@ -80,7 +85,8 @@ public class characterMove : MonoBehaviour
     {
         if (other.collider != previousSurface)
         {
-            print("Points colliding: " + other.contacts.Length);
+            downAxisSpeed = 0;
+            //print("Points colliding: " + other.contacts.Length);
             //print("First normal of the point that collide: " + other.contacts[0].point);
             contact = other.GetContact(0);
             transform.position = contact.normal + contact.point;
@@ -118,6 +124,7 @@ public class characterMove : MonoBehaviour
         if (Physics.Raycast(transform.position, transform.forward, zDistance))
         {
             otherSpeed.z = Mathf.Min(0, otherSpeed.z);
+            Debug.Log("wrong");
         }
         if (Physics.Raycast(transform.position, -transform.forward, zDistance))
         {
@@ -160,14 +167,14 @@ public class characterMove : MonoBehaviour
         velocity -= accel * previousDirection / 2;
 
         //disables decel making player transform go backwards (unlikely scenario)
-        if (magnitude != 0)
-        {
-            if (velocity / Math.Abs(velocity) != previousDirection)
-            {
-                velocity = 0;
-                //Debug.Log("whta");
-            }
-        }
+        //if (magnitude != 0)
+        //{
+        //    if (velocity / Math.Abs(velocity) != previousDirection)
+        //    {
+        //        velocity = 0;
+        //        Debug.Log("whta");
+        //    }
+        //}
 
         return velocity;
     }
