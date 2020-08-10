@@ -21,6 +21,7 @@ public class characterMove : MonoBehaviour
     //movement
     Vector3 relativeDownAxis = new Vector3();
     Vector3 relativeSpeed = new Vector3();
+    Vector3 effectiveGravity = new Vector3();
     Vector3 speed;
     float downAxisSpeed;
 
@@ -32,37 +33,30 @@ public class characterMove : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Time.timeScale = 1.0f;   
+        Time.timeScale = 1.0f;
+        relativeDownAxis = transform.InverseTransformDirection(downAxis).normalized;
     }
 
     // Update is called once per frame
     void Update()
     {
         //orient oursleves to normal of current surface, and don't reorient until next contact
-        if(shouldOrient)
-        {
-            shouldOrient = false;
-            transform.position = contact.normal + contact.point;
-            transform.rotation = Quaternion.FromToRotation(transform.up, contact.normal) * transform.rotation;
-
-            //Debug.Log(transform.InverseTransformDirection(downAxis));
-        }
 
         //get values for speed in  x z plane
-        relativeSpeed.x = accelerate("Horizontal");
-        relativeSpeed.z = accelerate("Vertical");
+        deltaV();
 
         //get current downAxis, transfrom into vector relative to player transform, and add gravity's speed in that direction 
         downAxisSpeed += gravity * Time.deltaTime;
-        if (isGrounded() && transform.up == downAxis)
+        effectiveGravity = relativeDownAxis * downAxisSpeed;
+        checkCollisions(ref effectiveGravity);
+        if (isGrounded() && effectiveGravity.magnitude < Mathf.Abs(gravity) / 2)
         {
-            downAxisSpeed = 0;
+            downAxisSpeed *= 0.5f;
         }
-        relativeDownAxis = transform.InverseTransformDirection(downAxis);
         relativeSpeed += relativeDownAxis * downAxisSpeed;
 
         //halt movement, relative to player transform, in any direction where there is object 
-        checkCollisions();
+        checkCollisions(ref relativeSpeed);
 
         //normalise x z movement if necessary and point them in their appropriate global direction
         if ((transform.right * relativeSpeed.x + transform.forward * relativeSpeed.z).magnitude > 1)
@@ -86,16 +80,18 @@ public class characterMove : MonoBehaviour
     {
         if (other.collider != previousSurface)
         {
-            shouldOrient = true;
-            //print("Points colliding: " + other.contacts.Length);
+            print("Points colliding: " + other.contacts.Length);
             //print("First normal of the point that collide: " + other.contacts[0].point);
             contact = other.GetContact(0);
+            transform.position = contact.normal + contact.point;
+            transform.rotation = Quaternion.FromToRotation(transform.up, contact.normal) * transform.rotation;
+            relativeDownAxis = transform.InverseTransformDirection(downAxis).normalized;
         }
         previousSurface = other.collider;
     }
 
     //set speed of transform in direction of object to zero
-    void checkCollisions()
+    void checkCollisions(ref Vector3 otherSpeed)
     {
         float xDistance = Collider.bounds.extents.x + skinDepth;
         float yDistance = Collider.bounds.extents.y + skinDepth;
@@ -103,32 +99,38 @@ public class characterMove : MonoBehaviour
 
         if (Physics.Raycast(transform.position, transform.right, xDistance))
         {
-            relativeSpeed.x = Mathf.Min(0, relativeSpeed.x);
+            otherSpeed.x = Mathf.Min(0, otherSpeed.x);
         }
         if (Physics.Raycast(transform.position, -transform.right, xDistance))
         {
-            relativeSpeed.x = Mathf.Max(0, relativeSpeed.x);
+            otherSpeed.x = Mathf.Max(0, otherSpeed.x);
         }
 
         if (Physics.Raycast(transform.position, transform.up, yDistance))
         {
-            relativeSpeed.y = Mathf.Min(0, relativeSpeed.y);
+            otherSpeed.y = Mathf.Min(0, otherSpeed.y);
         }
         if (Physics.Raycast(transform.position, -transform.up, yDistance))
         {
-            relativeSpeed.y = Mathf.Max(0, relativeSpeed.y);
+            otherSpeed.y = Mathf.Max(0, otherSpeed.y);
         }
 
         if (Physics.Raycast(transform.position, transform.forward, zDistance))
         {
-            relativeSpeed.z = Mathf.Min(0, relativeSpeed.z);
+            otherSpeed.z = Mathf.Min(0, otherSpeed.z);
         }
         if (Physics.Raycast(transform.position, -transform.forward, zDistance))
         {
-            relativeSpeed.z = Mathf.Max(0, relativeSpeed.z);
+            otherSpeed.z = Mathf.Max(0, otherSpeed.z);
         }
     }
 
+    void deltaV()
+    {
+        relativeSpeed.x = accelerate("Horizontal");
+        relativeSpeed.z = accelerate("Vertical");
+
+    }
     float accelerate(string axis)
     { 
         //get the previous velocity
@@ -154,6 +156,7 @@ public class characterMove : MonoBehaviour
             }
         }
 
+        //Debug.Log(previousDirection);
         velocity -= accel * previousDirection / 2;
 
         //disables decel making player transform go backwards (unlikely scenario)
@@ -162,7 +165,7 @@ public class characterMove : MonoBehaviour
             if (velocity / Math.Abs(velocity) != previousDirection)
             {
                 velocity = 0;
-                Debug.Log("whta");
+                //Debug.Log("whta");
             }
         }
 
@@ -185,4 +188,11 @@ public class characterMove : MonoBehaviour
         }
         return isGrounded;
     }
+}
+
+class accelerator 
+{
+    float velocity;
+    float magnitude;
+    float previousDirection;
 }
