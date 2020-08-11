@@ -58,6 +58,10 @@ public class characterMove : MonoBehaviour
         {
             downAxisSpeed *= 0.8f;
         }
+        if(isGrounded() && transform.up == downAxis)
+        {
+            downAxisSpeed = 0;
+        }
         relativeSpeed += relativeDownAxis * downAxisSpeed;
 
         //halt movement, relative to player transform, in any direction where there is object 
