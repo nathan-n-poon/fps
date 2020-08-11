@@ -164,7 +164,10 @@ public class characterMove : MonoBehaviour
         }
 
         //Debug.Log(previousDirection);
-        velocity -= accel * previousDirection / 2;
+        if (Mathf.Sign(velocity - accel * previousDirection / 2) == Mathf.Sign(velocity))
+            velocity -= accel * previousDirection / 2;
+        else
+            velocity = 0;
 
         //disables decel making player transform go backwards (unlikely scenario)
         //if (magnitude != 0)
@@ -202,4 +205,10 @@ class accelerator
     float velocity;
     float magnitude;
     float previousDirection;
+    characterMove character;
+
+    accelerator(characterMove character)
+    {
+        this.character = character;
+    }
 }
