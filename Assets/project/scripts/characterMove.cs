@@ -14,9 +14,9 @@ public class characterMove : MonoBehaviour
     //constants
     public float maxSpeed = 4f;
     public float walkAccel = 1f;
-    public float gravity =- 10f;
+    public float gravity = 10f;
     public float skinDepth = 0.3f;
-    Vector3 downAxis = new Vector3(0,1,0);
+    Vector3 downAxis = new Vector3(0,-1,0);
 
     //movement
     Vector3 relativeDownAxis = new Vector3();
@@ -51,7 +51,7 @@ public class characterMove : MonoBehaviour
         checkCollisions(ref effectiveGravity);
         if (isGrounded() && effectiveGravity.magnitude < Mathf.Abs(gravity) / 1.5)
         {
-            //Debug.Log("nani");
+            Debug.Log("nani");
             downAxisSpeed *= 0.5f;
         }
         else if (isGrounded())
@@ -190,7 +190,7 @@ public class characterMove : MonoBehaviour
     bool isGrounded()
     {
         bool isGrounded = false;
-        float yDistance = Collider.bounds.extents.y + skinDepth + 0.2f;
+        float yDistance = Collider.bounds.extents.y + skinDepth;
 
         if (Physics.Raycast(transform.position, transform.up, yDistance))
         {
