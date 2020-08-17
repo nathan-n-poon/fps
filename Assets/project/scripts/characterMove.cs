@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Assertions.Must;
 using UnityEngine.UIElements;
@@ -16,7 +17,7 @@ public class characterMove : MonoBehaviour
     public float walkAccel = 1f;
     public float gravity = 10f;
     public float skinDepth = 0.3f;
-    Vector3 downAxis = new Vector3(0,-1,0);
+    public Vector3 downAxis = new Vector3(0,-1,0);
 
     //movement
     Vector3 relativeDownAxis = new Vector3();
@@ -28,7 +29,7 @@ public class characterMove : MonoBehaviour
     //contact
     bool shouldOrient = false;
     ContactPoint contact = new ContactPoint();
-    Collider previousSurface = new Collider();
+    Collision previousSurface = new Collision();
 
     // Start is called before the first frame update
     void Start()
@@ -40,7 +41,25 @@ public class characterMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        Debug.Log(relativeSpeed.y);
+        relativeDownAxis = transform.InverseTransformDirection(downAxis);
         //orient oursleves to normal of current surface, and don't reorient until next contact
+        if(shouldOrient)
+        {
+            downAxisSpeed = 0;
+            //print("Points colliding: " + other.contacts.Length);
+            //print("First normal of the point that collide: " + other.contacts[0].point);
+            contact = previousSurface.GetContact(0);
+            transform.position = contact.normal + contact.point;
+            transform.rotation = Quaternion.FromToRotation(transform.up, contact.normal) * transform.rotation;
+            relativeDownAxis = transform.InverseTransformDirection(downAxis).normalized;
+            shouldOrient = false;
+            relativeSpeed = transform.InverseTransformDirection(speed);
+            checkCollisions(ref relativeSpeed);
+
+            //relativeSpeed = transform.TransformDirection(speed);
+        }
 
         //get values for speed in  x z plane
         deltaV();
@@ -87,17 +106,9 @@ public class characterMove : MonoBehaviour
     //set orient flag
     void OnCollisionEnter(Collision other)
     {
-        if (other.collider != previousSurface)
-        {
-            downAxisSpeed = 0;
-            //print("Points colliding: " + other.contacts.Length);
-            //print("First normal of the point that collide: " + other.contacts[0].point);
-            contact = other.GetContact(0);
-            transform.position = contact.normal + contact.point;
-            transform.rotation = Quaternion.FromToRotation(transform.up, contact.normal) * transform.rotation;
-            relativeDownAxis = transform.InverseTransformDirection(downAxis).normalized;
-        }
-        previousSurface = other.collider;
+        shouldOrient = true;
+        
+        previousSurface = other;
     }
 
     //set speed of transform in direction of object to zero
@@ -123,12 +134,12 @@ public class characterMove : MonoBehaviour
         if (Physics.Raycast(transform.position, -transform.up, yDistance))
         {
             otherSpeed.y = Mathf.Max(0, otherSpeed.y);
+            Debug.Log("wrong");
         }
 
         if (Physics.Raycast(transform.position, transform.forward, zDistance))
         {
             otherSpeed.z = Mathf.Min(0, otherSpeed.z);
-            Debug.Log("wrong");
         }
         if (Physics.Raycast(transform.position, -transform.forward, zDistance))
         {
