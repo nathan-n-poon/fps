@@ -13,8 +13,6 @@ public class characterMove : MonoBehaviour
     public Collider Collider;
 
     //constants
-    public float maxSpeed = 4f;
-    public float walkAccel = 1f;
     public float gravity = 10f;
     public float skinDepth = 0.3f;
     public Vector3 downAxis = new Vector3(0,-1,0);
@@ -22,9 +20,13 @@ public class characterMove : MonoBehaviour
     //movement
     Vector3 relativeDownAxis = new Vector3();
     Vector3 relativeSpeed = new Vector3();
+    Vector3 walkingSpeed = new Vector3();
     Vector3 effectiveGravity = new Vector3();
     Vector3 speed;
     float downAxisSpeed;
+
+    accelerator xAccelerator;
+    accelerator yAccelerator;
 
     //contact
     bool shouldOrient = false;
@@ -36,6 +38,9 @@ public class characterMove : MonoBehaviour
     {
         Time.timeScale = 1.0f;
         relativeDownAxis = transform.InverseTransformDirection(downAxis).normalized;
+
+        xAccelerator = new accelerator(ref walkingSpeed, 0, "Horizontal");
+        yAccelerator = new accelerator(ref walkingSpeed, 2, "Vertical");
     }
 
     // Update is called once per frame
@@ -43,26 +48,13 @@ public class characterMove : MonoBehaviour
     {
 
         Debug.Log(relativeSpeed.y);
-        relativeDownAxis = transform.InverseTransformDirection(downAxis);
-        //orient oursleves to normal of current surface, and don't reorient until next contact
-        if(shouldOrient)
-        {
-            downAxisSpeed = 0;
-            //print("Points colliding: " + other.contacts.Length);
-            //print("First normal of the point that collide: " + other.contacts[0].point);
-            contact = previousSurface.GetContact(0);
-            transform.position = contact.normal + contact.point;
-            transform.rotation = Quaternion.FromToRotation(transform.up, contact.normal) * transform.rotation;
-            relativeDownAxis = transform.InverseTransformDirection(downAxis).normalized;
-            shouldOrient = false;
-            relativeSpeed = transform.InverseTransformDirection(speed);
-            checkCollisions(ref relativeSpeed);
+       
 
-            //relativeSpeed = transform.TransformDirection(speed);
-        }
+        orientSelf();
+        
 
         //get values for speed in  x z plane
-        deltaV();
+        getWalkSpeeds();
 
         //get current downAxis, transfrom into vector relative to player transform, and add gravity's speed in that direction 
         downAxisSpeed += gravity * Time.deltaTime;
@@ -86,16 +78,6 @@ public class characterMove : MonoBehaviour
         //halt movement, relative to player transform, in any direction where there is object 
         checkCollisions(ref relativeSpeed);
 
-        //normalise x z movement if necessary and point them in their appropriate global direction
-        if ((transform.right * relativeSpeed.x + transform.forward * relativeSpeed.z).magnitude > 1)
-        {
-            speed = (transform.right * relativeSpeed.x + transform.forward * relativeSpeed.z).normalized;
-        }
-        else
-        {
-            speed = (transform.right * relativeSpeed.x + transform.forward * relativeSpeed.z);
-        }
-
         //set all speeds to global directions
         speed = speed * maxSpeed + transform.up * relativeSpeed.y;
 
@@ -109,6 +91,52 @@ public class characterMove : MonoBehaviour
         shouldOrient = true;
         
         previousSurface = other;
+    }
+
+    void orientSelf()
+    {
+        relativeDownAxis = transform.InverseTransformDirection(downAxis);
+        //orient oursleves to normal of current surface, and don't reorient until next contact
+        if (shouldOrient)
+        {
+            downAxisSpeed = 0;
+            //print("Points colliding: " + other.contacts.Length);
+            //print("First normal of the point that collide: " + other.contacts[0].point);
+            contact = previousSurface.GetContact(0);
+            transform.position = contact.normal + contact.point;
+            transform.rotation = Quaternion.FromToRotation(transform.up, contact.normal) * transform.rotation;
+            relativeDownAxis = transform.InverseTransformDirection(downAxis).normalized;
+            shouldOrient = false;
+            relativeSpeed = transform.InverseTransformDirection(speed);
+            checkCollisions(ref relativeSpeed);
+
+            //relativeSpeed = transform.TransformDirection(speed);
+        }
+    }
+
+    void getWalkSpeeds()
+    {
+        xAccelerator.update();
+        yAccelerator.update();
+
+        xAccelerator.accelerate();
+        yAccelerator.accelerate();
+
+        xAccelerator.decelerate();
+        yAccelerator.decelerate();
+
+        walkingSpeed.x = xAccelerator.finalVelocity();
+        walkingSpeed.z = yAccelerator.finalVelocity();
+
+        //normalise x z movement if necessary and point them in their appropriate global direction
+        if ((transform.right * walkingSpeed.x + transform.forward * walkingSpeed.z).magnitude > 1)
+        {
+            walkingSpeed = (transform.right * walkingSpeed.x + transform.forward * walkingSpeed.z).normalized * xAccelerator.maxSpeed;
+        }
+        else
+        {
+            walkingSpeed = (transform.right * walkingSpeed.x + transform.forward * walkingSpeed.z);
+        }
     }
 
     //set speed of transform in direction of object to zero
@@ -147,58 +175,8 @@ public class characterMove : MonoBehaviour
         }
     }
 
-    void deltaV()
-    {
-        relativeSpeed.x = accelerate("Horizontal");
-        relativeSpeed.z = accelerate("Vertical");
-
-    }
-    float accelerate(string axis)
-    { 
-        //get the previous velocity
-        float velocity = (axis == "Horizontal") ? relativeSpeed.x : relativeSpeed.z;
-        float magnitude = Mathf.Abs(velocity);
-        float previousDirection = 0;
-
-        float currentDirection = Input.GetAxisRaw(axis);
-        float accel = walkAccel * Time.deltaTime;
-
-        if(magnitude != 0)
-        {
-            previousDirection = velocity / magnitude;
-        }
-
-        if (currentDirection != 0 && isGrounded())
-        {
-            //Debug.Log("nein");
-            velocity += accel * currentDirection;
-            if(Mathf.Abs(velocity) > maxSpeed)
-            {
-                velocity = maxSpeed * currentDirection;
-            }
-        }
-
-        //Debug.Log(previousDirection);
-        if (Mathf.Sign(velocity - accel * previousDirection / 2) == Mathf.Sign(velocity))
-            velocity -= accel * previousDirection / 2;
-        else
-            velocity = 0;
-
-        //disables decel making player transform go backwards (unlikely scenario)
-        //if (magnitude != 0)
-        //{
-        //    if (velocity / Math.Abs(velocity) != previousDirection)
-        //    {
-        //        velocity = 0;
-        //        Debug.Log("whta");
-        //    }
-        //}
-
-        return velocity;
-    }
-
     // if there is object below transform, return true
-    bool isGrounded()
+    public bool isGrounded()
     {
         bool isGrounded = false;
         float yDistance = Collider.bounds.extents.y + skinDepth;
@@ -215,15 +193,61 @@ public class characterMove : MonoBehaviour
     }
 }
 
-class accelerator 
+class accelerator
 {
-    float velocity;
-    float magnitude;
-    float previousDirection;
-    characterMove character;
+    Vector3 speed;
+    int speedComponent;
+    string inputAxis;
 
-    accelerator(characterMove character)
+    float previousVelocity;
+    float previousDirection;
+
+    float currentDirection;
+
+    float walkAccel = 1f;
+    public float maxSpeed = 6f;
+    float accel;
+
+    float newVelocity;
+
+
+    public accelerator(ref Vector3 speed, int speedComponent, string inputAxis)
     {
-        this.character = character;
+        this.speed = speed;
+        this.speedComponent = speedComponent;
+        this.inputAxis = inputAxis;
+    }
+
+    public void update()
+    {
+        accel = walkAccel * Time.deltaTime;
+        previousVelocity = speed[speedComponent];
+        previousDirection = Mathf.Sign(previousVelocity);
+    }
+
+    public void accelerate()
+    {
+        float currentDirection = Input.GetAxisRaw(inputAxis);
+        if (currentDirection != 0 && GameObject.FindObjectOfType<characterMove>().isGrounded())
+        {
+            newVelocity = previousVelocity +  accel * currentDirection;
+            if(Mathf.Abs(previousVelocity) > maxSpeed)
+            {
+                newVelocity = maxSpeed * currentDirection;
+            }
+        }
+    }
+
+    public void decelerate()
+    {
+        if (Mathf.Sign(newVelocity - accel * previousDirection / 2) == Mathf.Sign(newVelocity))
+            newVelocity -= accel * previousDirection / 2;
+        else
+            newVelocity = 0;
+    }
+
+    public float finalVelocity ()
+    {
+        return newVelocity;
     }
 }
