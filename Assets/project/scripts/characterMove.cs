@@ -229,7 +229,7 @@ class accelerator
 
     public void accelerate()
     {
-        float currentDirection = Input.GetAxisRaw(inputAxis);
+        currentDirection = Input.GetAxisRaw(inputAxis);
         if (currentDirection != 0 && GameObject.FindObjectOfType<characterMove>().isGrounded())
         {
             newVelocity = previousVelocity +  accel * currentDirection;
