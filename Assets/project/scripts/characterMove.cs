@@ -2,9 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
-using UnityEngine;
+
 using UnityEngine.Assertions.Must;
 using UnityEngine.UIElements;
+using UnityEngine;
 public class characterMove : MonoBehaviour
 {
     //character objects
@@ -38,8 +39,8 @@ public class characterMove : MonoBehaviour
         Time.timeScale = 1.0f;
         relativeDownAxis = transform.InverseTransformDirection(downAxis).normalized;
 
-        xAccelerator = new accelerator(ref walkingSpeed, 0, "Horizontal");
-        zAccelerator = new accelerator(ref walkingSpeed, 2, "Vertical");
+        xAccelerator = new accelerator(walkingSpeed, 0, "Horizontal");
+        zAccelerator = new accelerator(walkingSpeed, 2, "Vertical");
     }
 
     // Update is called once per frame
@@ -103,12 +104,12 @@ public class characterMove : MonoBehaviour
         xAccelerator.decelerate();
         zAccelerator.decelerate();
 
-        xAccelerator.finalVelocity();
-        zAccelerator.finalVelocity();
+        walkingSpeed.x = xAccelerator.finalVelocity();
+        walkingSpeed.z = zAccelerator.finalVelocity();
 
         //normalise x z movement if necessary and point them in their appropriate global direction
 
-        Debug.Log(walkingSpeed.x); 
+        //Debug.Log("in caller: " + walkingSpeed.z);
         walkingSpeed = (transform.right * walkingSpeed.x + transform.forward * walkingSpeed.z) ;
 
     }
@@ -212,7 +213,7 @@ class accelerator
     float newVelocity;
 
 
-    public accelerator(ref Vector3 speed, int speedComponent, string inputAxis)
+    public accelerator(Vector3 speed, int speedComponent, string inputAxis)
     {
         this.speed = speed;
         this.speedComponent = speedComponent;
@@ -248,8 +249,10 @@ class accelerator
             newVelocity = 0;
     }
 
-    public void finalVelocity ()
+    public float finalVelocity ()
     {
-        speed[speedComponent] = newVelocity;
+        if(speedComponent == 2)
+        Debug.Log("in callee: " + newVelocity);
+        return newVelocity;
     }
 }
