@@ -19,7 +19,7 @@ public class characterMove : MonoBehaviour
     //movement
     Vector3 relativeDownAxis = new Vector3();
     Vector3 relativeSpeed = new Vector3();
-    Vector3 walkingSpeed = new Vector3();
+    Vector3 walkingSpeed = Vector3.zero;
     Vector3 effectiveGravity = new Vector3();
     Vector3 speed;
     float downAxisSpeed;
@@ -38,8 +38,8 @@ public class characterMove : MonoBehaviour
         Time.timeScale = 1.0f;
         relativeDownAxis = transform.InverseTransformDirection(downAxis).normalized;
 
-        xAccelerator = new accelerator(walkingSpeed, 0, "Horizontal");
-        zAccelerator = new accelerator(walkingSpeed, 2, "Vertical");
+        xAccelerator = new accelerator(ref walkingSpeed, 0, "Horizontal");
+        zAccelerator = new accelerator(ref walkingSpeed, 2, "Vertical");
     }
 
     // Update is called once per frame
@@ -108,7 +108,7 @@ public class characterMove : MonoBehaviour
 
         //normalise x z movement if necessary and point them in their appropriate global direction
 
-        Debug.Log(speed.x); 
+        Debug.Log(walkingSpeed.x); 
         walkingSpeed = (transform.right * walkingSpeed.x + transform.forward * walkingSpeed.z) ;
 
     }
@@ -212,7 +212,7 @@ class accelerator
     float newVelocity;
 
 
-    public accelerator(Vector3 speed, int speedComponent, string inputAxis)
+    public accelerator(ref Vector3 speed, int speedComponent, string inputAxis)
     {
         this.speed = speed;
         this.speedComponent = speedComponent;
