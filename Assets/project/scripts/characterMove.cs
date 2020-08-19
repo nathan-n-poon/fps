@@ -5,7 +5,6 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Assertions.Must;
 using UnityEngine.UIElements;
-
 public class characterMove : MonoBehaviour
 {
     //character objects
@@ -26,7 +25,7 @@ public class characterMove : MonoBehaviour
     float downAxisSpeed;
 
     accelerator xAccelerator;
-    accelerator yAccelerator;
+    accelerator zAccelerator;
 
     //contact
     bool shouldOrient = false;
@@ -39,47 +38,26 @@ public class characterMove : MonoBehaviour
         Time.timeScale = 1.0f;
         relativeDownAxis = transform.InverseTransformDirection(downAxis).normalized;
 
-        xAccelerator = new accelerator(ref walkingSpeed, 0, "Horizontal");
-        yAccelerator = new accelerator(ref walkingSpeed, 2, "Vertical");
+        xAccelerator = new accelerator(walkingSpeed, 0, "Horizontal");
+        zAccelerator = new accelerator(walkingSpeed, 2, "Vertical");
     }
 
     // Update is called once per frame
     void Update()
     {
 
-        Debug.Log(relativeSpeed.y);
-       
-
         orientSelf();
         
-
         //get values for speed in  x z plane
         getWalkSpeeds();
 
         //get current downAxis, transfrom into vector relative to player transform, and add gravity's speed in that direction 
-        downAxisSpeed += gravity * Time.deltaTime;
-        effectiveGravity = relativeDownAxis * gravity;
-        checkCollisions(ref effectiveGravity);
-        if (isGrounded() && effectiveGravity.magnitude < Mathf.Abs(gravity) / 1.5)
-        {
-            Debug.Log("nani");
-            downAxisSpeed *= 0.5f;
-        }
-        else if (isGrounded())
-        {
-            downAxisSpeed *= 0.8f;
-        }
-        if(isGrounded() && transform.up == downAxis)
-        {
-            downAxisSpeed = 0;
-        }
-        relativeSpeed += relativeDownAxis * downAxisSpeed;
+        calculateGravity();
+
+        speed = walkingSpeed + effectiveGravity;
 
         //halt movement, relative to player transform, in any direction where there is object 
-        checkCollisions(ref relativeSpeed);
-
-        //set all speeds to global directions
-        speed = speed * maxSpeed + transform.up * relativeSpeed.y;
+        checkCollisions(ref speed);
 
         m_Rigidbody.MovePosition(m_Rigidbody.position + (speed) * Time.deltaTime);
 
@@ -117,26 +95,48 @@ public class characterMove : MonoBehaviour
     void getWalkSpeeds()
     {
         xAccelerator.update();
-        yAccelerator.update();
+        zAccelerator.update();
 
         xAccelerator.accelerate();
-        yAccelerator.accelerate();
+        zAccelerator.accelerate();
 
         xAccelerator.decelerate();
-        yAccelerator.decelerate();
+        zAccelerator.decelerate();
 
-        walkingSpeed.x = xAccelerator.finalVelocity();
-        walkingSpeed.z = yAccelerator.finalVelocity();
+        xAccelerator.finalVelocity();
+        zAccelerator.finalVelocity();
 
         //normalise x z movement if necessary and point them in their appropriate global direction
-        if ((transform.right * walkingSpeed.x + transform.forward * walkingSpeed.z).magnitude > 1)
+
+        Debug.Log(speed.x); 
+        walkingSpeed = (transform.right * walkingSpeed.x + transform.forward * walkingSpeed.z) ;
+
+    }
+
+    void calculateGravity()
+    {
+        downAxisSpeed += gravity * Time.deltaTime;
+
+        //are we on sope relative to gravity?
+        effectiveGravity = relativeDownAxis * gravity;
+        checkCollisions(ref effectiveGravity);
+        if (isGrounded() && effectiveGravity.magnitude < Mathf.Abs(gravity) / 1.5)
         {
-            walkingSpeed = (transform.right * walkingSpeed.x + transform.forward * walkingSpeed.z).normalized * xAccelerator.maxSpeed;
+            //Debug.Log("nani");
+            downAxisSpeed *= 0.5f;
         }
-        else
+
+        else if (isGrounded())
         {
-            walkingSpeed = (transform.right * walkingSpeed.x + transform.forward * walkingSpeed.z);
+            downAxisSpeed *= 0.8f;
         }
+        if (isGrounded() && transform.up == downAxis)
+        {
+            downAxisSpeed = 0;
+        }
+
+        effectiveGravity = downAxisSpeed * relativeDownAxis;
+        effectiveGravity = transform.right * effectiveGravity.x + transform.up * effectiveGravity.y + transform.forward * effectiveGravity.z;
     }
 
     //set speed of transform in direction of object to zero
@@ -149,6 +149,7 @@ public class characterMove : MonoBehaviour
         if (Physics.Raycast(transform.position, transform.right, xDistance))
         {
             otherSpeed.x = Mathf.Min(0, otherSpeed.x);
+            Debug.Log("wrong");
         }
         if (Physics.Raycast(transform.position, -transform.right, xDistance))
         {
@@ -162,7 +163,7 @@ public class characterMove : MonoBehaviour
         if (Physics.Raycast(transform.position, -transform.up, yDistance))
         {
             otherSpeed.y = Mathf.Max(0, otherSpeed.y);
-            Debug.Log("wrong");
+            //Debug.Log("wrong");
         }
 
         if (Physics.Raycast(transform.position, transform.forward, zDistance))
@@ -211,7 +212,7 @@ class accelerator
     float newVelocity;
 
 
-    public accelerator(ref Vector3 speed, int speedComponent, string inputAxis)
+    public accelerator(Vector3 speed, int speedComponent, string inputAxis)
     {
         this.speed = speed;
         this.speedComponent = speedComponent;
@@ -220,8 +221,9 @@ class accelerator
 
     public void update()
     {
+
         accel = walkAccel * Time.deltaTime;
-        previousVelocity = speed[speedComponent];
+        previousVelocity = this.speed[speedComponent];
         previousDirection = Mathf.Sign(previousVelocity);
     }
 
@@ -231,7 +233,7 @@ class accelerator
         if (currentDirection != 0 && GameObject.FindObjectOfType<characterMove>().isGrounded())
         {
             newVelocity = previousVelocity +  accel * currentDirection;
-            if(Mathf.Abs(previousVelocity) > maxSpeed)
+            if(Mathf.Abs(newVelocity) > maxSpeed)
             {
                 newVelocity = maxSpeed * currentDirection;
             }
@@ -246,8 +248,8 @@ class accelerator
             newVelocity = 0;
     }
 
-    public float finalVelocity ()
+    public void finalVelocity ()
     {
-        return newVelocity;
+        speed[speedComponent] = newVelocity;
     }
 }
