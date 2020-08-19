@@ -39,8 +39,8 @@ public class characterMove : MonoBehaviour
         Time.timeScale = 1.0f;
         relativeDownAxis = transform.InverseTransformDirection(downAxis).normalized;
 
-        xAccelerator = new accelerator(walkingSpeed, 0, "Horizontal");
-        zAccelerator = new accelerator(walkingSpeed, 2, "Vertical");
+        xAccelerator = new accelerator( "Horizontal");
+        zAccelerator = new accelerator("Vertical");
     }
 
     // Update is called once per frame
@@ -95,8 +95,8 @@ public class characterMove : MonoBehaviour
 
     void getWalkSpeeds()
     {
-        xAccelerator.update();
-        zAccelerator.update();
+        xAccelerator.update(walkingSpeed.x);
+        zAccelerator.update(walkingSpeed.z);
 
         xAccelerator.accelerate();
         zAccelerator.accelerate();
@@ -213,18 +213,16 @@ class accelerator
     float newVelocity;
 
 
-    public accelerator(Vector3 speed, int speedComponent, string inputAxis)
+    public accelerator(string inputAxis)
     {
-        this.speed = speed;
-        this.speedComponent = speedComponent;
         this.inputAxis = inputAxis;
     }
 
-    public void update()
+    public void update(float previousSpeed)
     {
 
         accel = walkAccel * Time.deltaTime;
-        previousVelocity = this.speed[speedComponent];
+        previousVelocity = previousSpeed;
         previousDirection = Mathf.Sign(previousVelocity);
     }
 
@@ -251,8 +249,6 @@ class accelerator
 
     public float finalVelocity ()
     {
-        if(speedComponent == 2)
-        Debug.Log("in callee: " + newVelocity);
         return newVelocity;
     }
 }
