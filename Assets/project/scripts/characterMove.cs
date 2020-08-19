@@ -86,8 +86,8 @@ public class characterMove : MonoBehaviour
             transform.rotation = Quaternion.FromToRotation(transform.up, contact.normal) * transform.rotation;
             relativeDownAxis = transform.InverseTransformDirection(downAxis).normalized;
             shouldOrient = false;
-            relativeSpeed = transform.InverseTransformDirection(speed);
-            checkCollisions(ref relativeSpeed);
+            speed = transform.InverseTransformDirection(speed);
+            checkCollisions(ref speed);
 
             //relativeSpeed = transform.TransformDirection(speed);
         }
