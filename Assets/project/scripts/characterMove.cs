@@ -103,8 +103,8 @@ public class characterMove : MonoBehaviour
         xAccelerator.decelerate();
         zAccelerator.decelerate();
 
-        xAccelerator.finalVelocity();
-        zAccelerator.finalVelocity();
+        walkingSpeed.x = xAccelerator.finalVelocity();
+        walkingSpeed.z = zAccelerator.finalVelocity();
 
         //normalise x z movement if necessary and point them in their appropriate global direction
 
@@ -246,8 +246,8 @@ class accelerator
             newVelocity = 0;
     }
 
-    public void finalVelocity ()
+    public float finalVelocity ()
     {
-        speed[speedComponent] = newVelocity;
+        return newVelocity;
     }
 }
