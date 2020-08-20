@@ -57,8 +57,6 @@ public class characterMove : MonoBehaviour
         //get current downAxis, transfrom into vector relative to player transform, and add gravity's speed in that direction 
         calculateGravity();
 
-        speed += effectiveGravity;
-
         //halt movement, relative to player transform, in any direction where there is object 
         checkCollisions(ref speed);
 
@@ -121,12 +119,13 @@ public class characterMove : MonoBehaviour
         checkCollisions(ref effectiveGravity);
         if (isGrounded() && effectiveGravity.magnitude < Mathf.Abs(gravity) / 1.5)
         {
-            //Debug.Log("nani");
+            Debug.Log("nani");
             downAxisSpeed *= 0.5f;
         }
 
         else if (isGrounded())
         {
+            Debug.Log("0.8");
             downAxisSpeed *= 0.8f;
         }
         if (isGrounded() && transform.up == -downAxis)
@@ -135,6 +134,11 @@ public class characterMove : MonoBehaviour
         }
 
         effectiveGravity = downAxisSpeed * relativeDownAxis;
+
+        speed += effectiveGravity;
+
+        //Debug.DrawRay(transform.position, Collider.bounds.extents.y);
+        Debug.Log(Physics.Raycast(transform.position, -transform.up, Collider.bounds.extents.y));
         //effectiveGravity = transform.right * effectiveGravity.x + transform.up * effectiveGravity.y + transform.forward * effectiveGravity.z;
     }
 
@@ -204,7 +208,7 @@ class accelerator
 
     float currentDirection;
 
-    float walkAccel = 1f;
+    float walkAccel = 2f;
     public float maxSpeed = 6f;
     float accel;
 
@@ -242,7 +246,6 @@ class accelerator
         if (Mathf.Sign(newVelocity - accel * previousDirection / 2) == Mathf.Sign(newVelocity))
         {
             newVelocity -= accel * previousDirection / 2;
-            Debug.Log(accel * previousDirection / 2);
         }
         else
             newVelocity = 0;
