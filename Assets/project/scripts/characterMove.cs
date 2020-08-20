@@ -46,6 +46,8 @@ public class characterMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        speed = Vector3.zero;
+
         //Debug.Log(downAxisSpeed);
         orientSelf();
         
@@ -55,13 +57,13 @@ public class characterMove : MonoBehaviour
         //get current downAxis, transfrom into vector relative to player transform, and add gravity's speed in that direction 
         calculateGravity();
 
-        speed = walkingSpeed + effectiveGravity;
+        speed += effectiveGravity;
 
         //halt movement, relative to player transform, in any direction where there is object 
         checkCollisions(ref speed);
 
         m_Rigidbody.MovePosition(m_Rigidbody.position + (speed) * Time.deltaTime);
-        Debug.Log(downAxisSpeed);
+        //Debug.Log(speed.x);
 
     }
 
@@ -106,7 +108,7 @@ public class characterMove : MonoBehaviour
         //normalise x z movement if necessary and point them in their appropriate global direction
 
         //Debug.Log("in caller: " + walkingSpeed.z);
-        walkingSpeed = (transform.right * walkingSpeed.x + transform.forward * walkingSpeed.z) ;
+        speed += (transform.right * walkingSpeed.x + transform.forward * walkingSpeed.z) ;
 
     }
 
@@ -238,7 +240,10 @@ class accelerator
     public void decelerate()
     {
         if (Mathf.Sign(newVelocity - accel * previousDirection / 2) == Mathf.Sign(newVelocity))
+        {
             newVelocity -= accel * previousDirection / 2;
+            Debug.Log(accel * previousDirection / 2);
+        }
         else
             newVelocity = 0;
     }
