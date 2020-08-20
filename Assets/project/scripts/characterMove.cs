@@ -46,7 +46,7 @@ public class characterMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        //Debug.Log(downAxisSpeed);
         orientSelf();
         
         //get values for speed in  x z plane
@@ -61,6 +61,7 @@ public class characterMove : MonoBehaviour
         checkCollisions(ref speed);
 
         m_Rigidbody.MovePosition(m_Rigidbody.position + (speed) * Time.deltaTime);
+        Debug.Log(downAxisSpeed);
 
     }
 
@@ -74,22 +75,17 @@ public class characterMove : MonoBehaviour
 
     void orientSelf()
     {
-        relativeDownAxis = transform.InverseTransformDirection(downAxis);
         //orient oursleves to normal of current surface, and don't reorient until next contact
         if (shouldOrient)
         {
+            relativeDownAxis = transform.InverseTransformDirection(downAxis);
             downAxisSpeed = 0;
-            //print("Points colliding: " + other.contacts.Length);
-            //print("First normal of the point that collide: " + other.contacts[0].point);
             contact = previousSurface.GetContact(0);
             transform.position = contact.normal + contact.point;
             transform.rotation = Quaternion.FromToRotation(transform.up, contact.normal) * transform.rotation;
-            relativeDownAxis = transform.InverseTransformDirection(downAxis).normalized;
             shouldOrient = false;
-            speed = transform.InverseTransformDirection(speed);
+            //speed = transform.InverseTransformDirection(speed);
             checkCollisions(ref speed);
-
-            //relativeSpeed = transform.TransformDirection(speed);
         }
     }
 
@@ -118,7 +114,7 @@ public class characterMove : MonoBehaviour
     {
         downAxisSpeed += gravity * Time.deltaTime;
 
-        //are we on sope relative to gravity?
+        //are we on slope relative to gravity?
         effectiveGravity = relativeDownAxis * gravity;
         checkCollisions(ref effectiveGravity);
         if (isGrounded() && effectiveGravity.magnitude < Mathf.Abs(gravity) / 1.5)
@@ -131,13 +127,13 @@ public class characterMove : MonoBehaviour
         {
             downAxisSpeed *= 0.8f;
         }
-        if (isGrounded() && transform.up == downAxis)
+        if (isGrounded() && transform.up == -downAxis)
         {
             downAxisSpeed = 0;
         }
 
         effectiveGravity = downAxisSpeed * relativeDownAxis;
-        effectiveGravity = transform.right * effectiveGravity.x + transform.up * effectiveGravity.y + transform.forward * effectiveGravity.z;
+        //effectiveGravity = transform.right * effectiveGravity.x + transform.up * effectiveGravity.y + transform.forward * effectiveGravity.z;
     }
 
     //set speed of transform in direction of object to zero
