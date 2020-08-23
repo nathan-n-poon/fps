@@ -19,7 +19,6 @@ public class characterMove : MonoBehaviour
 
     //movement
     Vector3 relativeDownAxis = new Vector3();
-    Vector3 relativeSpeed = new Vector3();
     Vector3 walkingSpeed = Vector3.zero;
     Vector3 effectiveGravity = new Vector3();
     Vector3 speed;
@@ -32,11 +31,19 @@ public class characterMove : MonoBehaviour
     bool shouldOrient = false;
     ContactPoint contact = new ContactPoint();
     Collision previousSurface = new Collision();
+    float xDistance;
+    float yDistance;
+    float zDistance;
 
     // Start is called before the first frame update
     void Start()
     {
         Time.timeScale = 1.0f;
+        transform.rotation = Quaternion.Euler(0, 90, 0);
+        xDistance = Collider.bounds.extents.x;
+        yDistance = Collider.bounds.extents.y;
+        zDistance = Collider.bounds.extents.z;
+        
         relativeDownAxis = transform.InverseTransformDirection(downAxis).normalized;
 
         xAccelerator = new accelerator( "Horizontal");
@@ -137,18 +144,14 @@ public class characterMove : MonoBehaviour
 
         speed += effectiveGravity;
 
-        //Debug.DrawRay(transform.position, Collider.bounds.extents.y);
-        Debug.Log(Physics.Raycast(transform.position, -transform.up, Collider.bounds.extents.y));
+        Debug.DrawRay(transform.position, -transform.up * yDistance, Color.white, 2);
+        Debug.Log(downAxisSpeed);
         //effectiveGravity = transform.right * effectiveGravity.x + transform.up * effectiveGravity.y + transform.forward * effectiveGravity.z;
     }
 
     //set speed of transform in direction of object to zero
     void checkCollisions(ref Vector3 otherSpeed)
     {
-        float xDistance = Collider.bounds.extents.x + skinDepth;
-        float yDistance = Collider.bounds.extents.y + skinDepth;
-        float zDistance = Collider.bounds.extents.z + skinDepth;
-
         if (Physics.Raycast(transform.position, transform.right, xDistance))
         {
             otherSpeed.x = Mathf.Min(0, otherSpeed.x);
