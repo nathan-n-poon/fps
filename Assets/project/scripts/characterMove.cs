@@ -126,13 +126,11 @@ public class characterMove : MonoBehaviour
         checkCollisions(ref effectiveGravity);
         if (isGrounded() && effectiveGravity.magnitude < Mathf.Abs(gravity) / 1.5)
         {
-            Debug.Log("nani");
             downAxisSpeed *= 0.5f;
         }
 
         else if (isGrounded())
         {
-            Debug.Log("0.8");
             downAxisSpeed *= 0.8f;
         }
         if (isGrounded() && transform.up == -downAxis)
@@ -143,9 +141,8 @@ public class characterMove : MonoBehaviour
         effectiveGravity = downAxisSpeed * relativeDownAxis;
 
         speed += effectiveGravity;
-
-        Debug.DrawRay(transform.position, -transform.up * yDistance, Color.white, 2);
-        Debug.Log(downAxisSpeed);
+            
+        Debug.Log(isGrounded());
         //effectiveGravity = transform.right * effectiveGravity.x + transform.up * effectiveGravity.y + transform.forward * effectiveGravity.z;
     }
 
@@ -155,7 +152,6 @@ public class characterMove : MonoBehaviour
         if (Physics.Raycast(transform.position, transform.right, xDistance))
         {
             otherSpeed.x = Mathf.Min(0, otherSpeed.x);
-            Debug.Log("wrong");
         }
         if (Physics.Raycast(transform.position, -transform.right, xDistance))
         {
@@ -186,7 +182,6 @@ public class characterMove : MonoBehaviour
     public bool isGrounded()
     {
         bool isGrounded = false;
-        float yDistance = Collider.bounds.extents.y + skinDepth;
 
         // if (Physics.Raycast(transform.position, transform.up, yDistance))
         // {
