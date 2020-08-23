@@ -188,10 +188,10 @@ public class characterMove : MonoBehaviour
         bool isGrounded = false;
         float yDistance = Collider.bounds.extents.y + skinDepth;
 
-        if (Physics.Raycast(transform.position, transform.up, yDistance))
-        {
-            isGrounded = true;
-        }
+        // if (Physics.Raycast(transform.position, transform.up, yDistance))
+        // {
+        //     isGrounded = true;
+        // }
         if (Physics.Raycast(transform.position, -transform.up, yDistance))
         {
             isGrounded = true;
