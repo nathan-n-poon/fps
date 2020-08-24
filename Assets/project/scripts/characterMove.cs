@@ -18,7 +18,6 @@ public class characterMove : MonoBehaviour
     public Vector3 downAxis = new Vector3(0,-1,0);
 
     //movement
-    Vector3 relativeDownAxis = new Vector3();
     Vector3 walkingSpeed = Vector3.zero;
     Vector3 effectiveGravity = new Vector3();
     Vector3 speed;
@@ -45,8 +44,6 @@ public class characterMove : MonoBehaviour
         xDistance = Collider.bounds.extents.x;
         yDistance = Collider.bounds.extents.y;
         zDistance = Collider.bounds.extents.z;
-        
-        relativeDownAxis = transform.InverseTransformDirection(downAxis).normalized;
 
         xAccelerator = new accelerator( "Horizontal");
         zAccelerator = new accelerator("Vertical");
@@ -65,9 +62,6 @@ public class characterMove : MonoBehaviour
 
         //get current downAxis, transfrom into vector relative to player transform, and add gravity's speed in that direction 
         calculateGravity();
-
-        //halt movement, relative to player transform, in any direction where there is object 
-        checkCollisions(ref speed);
 
         m_Rigidbody.MovePosition(m_Rigidbody.position + (speed) * Time.deltaTime);
         //Debug.Log(speed.x);
@@ -103,11 +97,9 @@ public class characterMove : MonoBehaviour
             contact = previousSurface.GetContact(0);
             //transform.position = contact.normal + contact.point;
             transform.rotation = Quaternion.FromToRotation(transform.up, contact.normal) * transform.rotation;
-            relativeDownAxis = downAxis;
-            Debug.DrawRay(transform.position, 2 * relativeDownAxis, Color.white, 2);
+            Debug.DrawRay(transform.position, 2 * downAxis, Color.white, 2);
             shouldOrient = false;
             //speed = transform.InverseTransformDirection(speed);
-            checkCollisions(ref speed);
         }
     }
 
@@ -137,60 +129,60 @@ public class characterMove : MonoBehaviour
         downAxisSpeed += gravity * Time.deltaTime;
 
         //are we on slope relative to gravity?
-        effectiveGravity = relativeDownAxis * gravity;
+        effectiveGravity = downAxis * gravity;
         checkCollisions(ref effectiveGravity);
-        if (isGrounded && effectiveGravity.magnitude < Mathf.Abs(gravity) / 1.5)
-        {
-            downAxisSpeed *= 0.5f;
-        }
+        //if (isGrounded && effectiveGravity.magnitude < Mathf.Abs(gravity) / 1.5)
+        //{
+        //    downAxisSpeed *= 0.5f;
+        //}
 
-        else if (isGrounded)
-        {
-            downAxisSpeed *= 0.8f;
-        }
+        //else if (isGrounded)
+        //{
+        //    downAxisSpeed *= 0.8f;
+        //}
         if (isGrounded && transform.up == -downAxis)
         {
+            Debug.Log("hello");
             downAxisSpeed = 0;
         }
 
-        effectiveGravity = downAxisSpeed * relativeDownAxis;
+        effectiveGravity = downAxisSpeed * downAxis;
 
         speed += effectiveGravity;
-            
-        Debug.Log(isGrounded);
+           
         //effectiveGravity = transform.right * effectiveGravity.x + transform.up * effectiveGravity.y + transform.forward * effectiveGravity.z;
     }
 
     //set speed of transform in direction of object to zero
     void checkCollisions(ref Vector3 otherSpeed)
     {
-        //if (Physics.Raycast(transform.position, transform.right, xDistance))
-        //{
-        //    otherSpeed.x = Mathf.Min(0, otherSpeed.x);
-        //}
-        //if (Physics.Raycast(transform.position, -transform.right, xDistance))
-        //{
-        //    otherSpeed.x = Mathf.Max(0, otherSpeed.x);
-        //}
+        if (Physics.Raycast(transform.position, transform.right, xDistance))
+        {
+            otherSpeed.x = Mathf.Min(0, otherSpeed.x);
+        }
+        if (Physics.Raycast(transform.position, -transform.right, xDistance))
+        {
+            otherSpeed.x = Mathf.Max(0, otherSpeed.x);
+        }
 
-        //if (Physics.Raycast(transform.position, transform.up, yDistance))
-        //{
-        //    otherSpeed.y = Mathf.Min(0, otherSpeed.y);
-        //}
-        //if (Physics.Raycast(transform.position, -transform.up, yDistance))
-        //{
-        //    otherSpeed.y = Mathf.Max(0, otherSpeed.y);
-        //    //Debug.Log("wrong");
-        //}
+        if (Physics.Raycast(transform.position, transform.up, yDistance))
+        {
+            otherSpeed.y = Mathf.Min(0, otherSpeed.y);
+        }
+        if (Physics.Raycast(transform.position, -transform.up, yDistance))
+        {
+            otherSpeed.y = Mathf.Max(0, otherSpeed.y);
+            //Debug.Log("wrong");
+        }
 
-        //if (Physics.Raycast(transform.position, transform.forward, zDistance))
-        //{
-        //    otherSpeed.z = Mathf.Min(0, otherSpeed.z);
-        //}
-        //if (Physics.Raycast(transform.position, -transform.forward, zDistance))
-        //{
-        //    otherSpeed.z = Mathf.Max(0, otherSpeed.z);
-        //}
+        if (Physics.Raycast(transform.position, transform.forward, zDistance))
+        {
+            otherSpeed.z = Mathf.Min(0, otherSpeed.z);
+        }
+        if (Physics.Raycast(transform.position, -transform.forward, zDistance))
+        {
+            otherSpeed.z = Mathf.Max(0, otherSpeed.z);
+        }
     }
 
     public bool getIsGrounded()
