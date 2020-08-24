@@ -29,7 +29,7 @@ public class characterMove : MonoBehaviour
     //contact
     bool shouldOrient = false;
     ContactPoint contact = new ContactPoint();
-    Collision previousSurface = new Collision();
+    ContactPoint previousSurface = new ContactPoint();
     float xDistance;
     float yDistance;
     float zDistance;
@@ -76,7 +76,11 @@ public class characterMove : MonoBehaviour
         isGrounded = true;
         touchingCount++;
 
-        previousSurface = other;
+        int temp = other.contacts.Length - 1;
+        if(temp >= 0)
+        {
+            previousSurface = other.contacts[temp];
+        }
     }       
 
     void OnCollisionExit(Collision collision)
@@ -94,7 +98,7 @@ public class characterMove : MonoBehaviour
         if (shouldOrient)
         {
             //downAxisSpeed = 0;
-            contact = previousSurface.GetContact(0);
+            contact = previousSurface;
             //transform.position = contact.normal + contact.point;
             transform.rotation = Quaternion.FromToRotation(transform.up, contact.normal) * transform.rotation;
             Debug.DrawRay(transform.position, 2 * downAxis, Color.white, 2);
