@@ -9,8 +9,8 @@ using UnityEngine;
 public class characterMove : MonoBehaviour
 {
     //character objects
-    public Rigidbody m_Rigidbody;
-    public Collider Collider;
+    Rigidbody m_Rigidbody = GetComponent<Rigidbody>();
+    Collider Collider = GetComponent<Collider>();
 
     //constants
     public float gravity = 10f;

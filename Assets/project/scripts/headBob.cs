@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class headBob : MonoBehaviour
 {
-    public Camera m_Camera;
+    Camera m_Camera = GetComponent<Camera>();
     float deltaY;
     float totalTime = 0;
     // Start is called before the first frame update
