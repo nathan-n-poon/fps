@@ -9,8 +9,8 @@ using UnityEngine;
 public class characterMove : MonoBehaviour
 {
     //character objects
-    Rigidbody m_Rigidbody = GetComponent<Rigidbody>();
-    Collider Collider = GetComponent<Collider>();
+    Rigidbody m_Rigidbody;
+    Collider Collider; 
 
     //constants
     public float gravity = 10f;
@@ -39,6 +39,8 @@ public class characterMove : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        m_Rigidbody = GetComponent<Rigidbody>();
+        Collider = GetComponent<Collider>();
         Time.timeScale = 1.0f;
         transform.rotation = Quaternion.Euler(0, 90, 0);
         xDistance = Collider.bounds.extents.x;
@@ -196,6 +198,11 @@ public class characterMove : MonoBehaviour
     public Vector3 getWalkingSpeed()
     {
         return walkingSpeed;
+    }
+
+    public void setWalkingSpeed(Vector3 newWalkingSpeed)
+    {
+        walkingSpeed = newWalkingSpeed;
     }
 
 }
