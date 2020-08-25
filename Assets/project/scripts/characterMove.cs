@@ -146,7 +146,6 @@ public class characterMove : MonoBehaviour
         //}
         if (isGrounded && transform.up == -downAxis)
         {
-            Debug.Log("hello");
             downAxisSpeed = 0;
         }
 
@@ -192,6 +191,11 @@ public class characterMove : MonoBehaviour
     public bool getIsGrounded()
     {
         return isGrounded;
+    }
+
+    public Vector3 getWalkingSpeed()
+    {
+        return walkingSpeed;
     }
 
 }
