@@ -23,6 +23,6 @@ public class headBob : MonoBehaviour
         {
             totalTime = 0;
         }
-        Debug.Log(transform.localPosition.y);
+        Debug.Log(transform.localPosition.y - 0.5);
     }
 }
