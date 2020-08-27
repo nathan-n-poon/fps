@@ -9,8 +9,11 @@ public class InputManager : MonoBehaviour
     [Range(0,20)]
     public int buttonCount;
 
+    public Controller m_controller;
+
     public void PassInput(InputData m_InputData)
     {
+        m_controller.ReadInput(m_InputData);
 
     }
 }

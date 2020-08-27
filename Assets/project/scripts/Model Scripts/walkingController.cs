@@ -5,14 +5,13 @@ using UnityEngine;
 public class walkingController : MonoBehaviour
 {
     // Start is called before the first frame update
-    void Start()
+    public override ReadInput(InputData m_InputData)
     {
-        
+        newInput = true;
     }
 
-    // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
-        
+
     }
 }
