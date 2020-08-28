@@ -147,10 +147,10 @@ public class characterMove : MonoBehaviour
         //are we on slope relative to gravity?
         effectiveGravity = downAxis * gravity;
         checkCollisions(ref effectiveGravity);
-        if (isGrounded && effectiveGravity.magnitude < Mathf.Abs(gravity) / 1.5)
-        {
-            downAxisSpeed *= 0.5f;
-        }
+        //if (isGrounded && effectiveGravity.magnitude < Mathf.Abs(gravity) / 1.5)
+        //{
+        //    downAxisSpeed *= 0.5f;
+        //}
     }
 
     void jump()
