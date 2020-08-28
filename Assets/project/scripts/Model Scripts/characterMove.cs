@@ -15,9 +15,10 @@ public class characterMove : MonoBehaviour
     Collider Collider;
 
     //constants
-    public float gravity = 10f;
+    public float gravity = 1f;
     public float skinDepth = 0.3f;
     public Vector3 downAxis = new Vector3(0,-1,0);
+    public float jumpPower = 2f;
 
     //movement
     Vector3 walkingSpeed = Vector3.zero;
@@ -64,8 +65,7 @@ public class characterMove : MonoBehaviour
         //get values for speed in  x z plane
         getWalkSpeeds();
 
-        //get current downAxis, transfrom into vector relative to player transform, and add gravity's speed in that direction 
-        calculateGravity();
+        calculateVertical();
 
         m_Rigidbody.MovePosition(m_Rigidbody.position + (speed) * Time.deltaTime);
     }
@@ -126,22 +126,10 @@ public class characterMove : MonoBehaviour
 
     }
 
-    void calculateGravity()
+    void calculateVertical()
     {
-        downAxisSpeed += gravity * Time.deltaTime;
-
-        //are we on slope relative to gravity?
-        effectiveGravity = downAxis * gravity;
-        checkCollisions(ref effectiveGravity);
-        //if (isGrounded && effectiveGravity.magnitude < Mathf.Abs(gravity) / 1.5)
-        //{
-        //    downAxisSpeed *= 0.5f;
-        //}
-
-        //else if (isGrounded)
-        //{
-        //    downAxisSpeed *= 0.8f;
-        //}
+        calculateGravity();
+        jump();
         if (isGrounded && transform.up == -downAxis)
         {
             downAxisSpeed = 0;
@@ -150,6 +138,33 @@ public class characterMove : MonoBehaviour
         effectiveGravity = downAxisSpeed * downAxis;
 
         speed += effectiveGravity;
+    }
+
+    void calculateGravity()
+    {
+        downAxisSpeed += gravity * Time.deltaTime;
+
+        //are we on slope relative to gravity?
+        effectiveGravity = downAxis * gravity;
+        checkCollisions(ref effectiveGravity);
+        if (isGrounded && effectiveGravity.magnitude < Mathf.Abs(gravity) / 1.5)
+        {
+            downAxisSpeed *= 0.5f;
+        }
+    }
+
+    void jump()
+    {
+        if (isGrounded && (m_InputData.jumpPressed == 1 ? true : false))
+        {
+            downAxisSpeed -= jumpPower;
+            if(downAxisSpeed < -0.5f)
+            {
+                isGrounded = false;
+                Debug.Log(downAxisSpeed);
+            }
+            Debug.Log(jumpPower / Mathf.Abs(gravity));
+        }
     }
 
     //set speed of transform in direction of object to zero
@@ -212,7 +227,7 @@ class accelerator
 
     float currentDirection;
 
-    float walkAccel = 2f;
+    float walkAccel = 3f;
     public float maxSpeed = 6f;
     float accel;
 
@@ -247,12 +262,15 @@ class accelerator
 
     public void decelerate()
     {
-        if (Mathf.Sign(newVelocity - accel * previousDirection / 2) == Mathf.Sign(newVelocity))
+        if (GameObject.FindObjectOfType<characterMove>().getIsGrounded())
         {
-            newVelocity -= accel * previousDirection / 2;
+            if (Mathf.Sign(newVelocity - accel * previousDirection / 2) == Mathf.Sign(newVelocity))
+            {
+                newVelocity -= accel * previousDirection / 1.5f;
+            }
+            else
+                newVelocity = 0;
         }
-        else
-            newVelocity = 0;
     }
 
     public float finalVelocity ()

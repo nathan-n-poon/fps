@@ -20,6 +20,8 @@ public class KeyBoardTracker : DeviceTracker
         m_InputData.horizontalLook = (int)Input.GetAxisRaw("Mouse X");
         m_InputData.verticalLook = (int)Input.GetAxisRaw("Mouse Y");
 
+        m_InputData.jumpPressed = Input.GetButtonDown("Jump") == true ? 1 : 0;
+
         m_InputManager.PassInput(m_InputData);
         m_InputData.Reset();
         
