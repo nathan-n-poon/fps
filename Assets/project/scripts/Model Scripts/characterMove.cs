@@ -8,9 +8,11 @@ using UnityEngine.UIElements;
 using UnityEngine;
 public class characterMove : MonoBehaviour
 {
+    InputData m_InputData;
+
     //character objects
     Rigidbody m_Rigidbody;
-    Collider Collider; 
+    Collider Collider;
 
     //constants
     public float gravity = 10f;
@@ -34,7 +36,7 @@ public class characterMove : MonoBehaviour
     float yDistance;
     float zDistance;
     bool isGrounded = false;
-    int touchingCount;
+    int touchingCount = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -52,8 +54,9 @@ public class characterMove : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    public void update(InputData m_InputData)
     {
+        this.m_InputData = m_InputData;
         speed = Vector3.zero;
         
         orientSelf();
@@ -108,8 +111,8 @@ public class characterMove : MonoBehaviour
         xAccelerator.update(walkingSpeed.x);
         zAccelerator.update(walkingSpeed.z);
 
-        xAccelerator.accelerate();
-        zAccelerator.accelerate();
+        xAccelerator.accelerate(m_InputData.horizontalMove);
+        zAccelerator.accelerate(m_InputData.verticalMove);
 
         xAccelerator.decelerate();
         zAccelerator.decelerate();
@@ -229,9 +232,9 @@ class accelerator
         previousDirection = Mathf.Sign(previousVelocity);
     }
 
-    public void accelerate()
+    public void accelerate(float currentDirection)
     {
-        currentDirection = Input.GetAxisRaw(inputAxis);
+        this.currentDirection = currentDirection;
         if (currentDirection != 0 && GameObject.FindObjectOfType<characterMove>().getIsGrounded())
         {
             newVelocity = previousVelocity +  accel * currentDirection;

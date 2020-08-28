@@ -18,11 +18,11 @@ public class moveCamera : MonoBehaviour
         headBob = new headBob(m_Camera, transform);
     }
 
-    private void Update()
+    public void update(InputData m_InputData)
     {
         walkingSpeed = GameObject.FindObjectOfType<characterMove>().getWalkingSpeed();
-        mouseLook.Update(walkingSpeed);
-        headBob.Update(walkingSpeed);
+        mouseLook.update(walkingSpeed, m_InputData);
+        headBob.update(walkingSpeed);
     }
 
 
@@ -44,10 +44,10 @@ class mouseLook
         this.transform = transform;
     }
 
-    public void Update(Vector3 walkingSpeed)
+    public void update(Vector3 walkingSpeed, InputData m_InputData)
     {
-        float mouseX = Input.GetAxis("Mouse X") * mouseXSensitivity * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseYSensitivity * Time.deltaTime;
+        float mouseX = m_InputData.horizontalLook * mouseXSensitivity * Time.deltaTime;
+        float mouseY = m_InputData.verticalLook * mouseYSensitivity * Time.deltaTime;
 
         deltaRotation = Quaternion.Euler(Vector3.up * mouseX);
 
@@ -78,7 +78,7 @@ class headBob
         this.transform = transform;
     }
     
-    public void Update(Vector3 walkingSpeed)
+    public void update(Vector3 walkingSpeed)
     {
         totalTime += Time.deltaTime;
         deltaY = walkingSpeed.magnitude * Mathf.Sin(totalTime * 5) / 100;

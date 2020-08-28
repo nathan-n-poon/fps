@@ -4,7 +4,12 @@ using UnityEngine;
 
 public class InputManager : MonoBehaviour
 {
-    public Controller m_controller;
+    Controller m_controller;
+
+    private void Start()
+    {
+        m_controller = GetComponent<Controller>();
+    }
 
     public void PassInput(InputData m_InputData)
     {
@@ -27,7 +32,7 @@ public struct InputData
         horizontalMove = 0;
         verticalMove = 0;
         horizontalLook = 0;
-        verticalMove = 0;
+        verticalLook = 0;
     }
 
 }
