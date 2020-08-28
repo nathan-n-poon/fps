@@ -5,58 +5,28 @@ using UnityEngine;
 
 public class KeyBoardTracker : DeviceTracker
 {
-    public AxisButtons[] axisKeys;
-    public KeyCode[] buttonKeys;
 
-    private void Reset()
+    void Awake()
     {
         m_InputManager = GetComponent<InputManager>();
-        axisKeys = new AxisButtons[m_InputManager.axisCount];
-        buttonKeys = new KeyCode[m_InputManager.buttonCount];
     }
 
     // Update is called once per frame
     void Update()
     {
+        m_InputData.horizontalMove = (int)Input.GetAxisRaw("Horizontal");
+        m_InputData.verticalMove = (int)Input.GetAxisRaw("Vertical");
 
-        for (int i = 0; i < buttonKeys.Length; i++)
+        m_InputData.horizontalLook = (int)Input.GetAxisRaw("Mouse X");
+        m_InputData.verticalLook = (int)Input.GetAxisRaw("Mouse Y");
+
+        newData = (m_InputData.verticalLook | m_InputData.horizontalLook | m_InputData.verticalMove | m_InputData.horizontalMove) != 0 ? true : false;
+
+        if (newData)
         {
-            if(Input.GetKey(buttonKeys[i]))
-            {
-                m_InputData.buttons[i] = true;
-                newData = true;
-            }
-        }
-
-        for (int i = 0; i < axisKeys.Length; i++)
-        {
-            float val = 0;
-            if(Input.GetKey(axisKeys[i].positive))
-            {
-                val += 1;
-                newData = true;
-            }
-            if (Input.GetKey(axisKeys[i].negative))
-            {
-                val -= 1;
-                newData = true;
-            }
-            m_InputData.axes[i] = val;
-
-        }
-
-        if(newData)
-        {
-            m_InputManager.PassInput(m_InputData);
             newData = false;
+            m_InputManager.PassInput(m_InputData);
             m_InputData.Reset();
         }
     }
-}
-
-[System.Serializable]
-public struct AxisButtons
-{
-    public KeyCode positive;
-    public KeyCode negative;
 }

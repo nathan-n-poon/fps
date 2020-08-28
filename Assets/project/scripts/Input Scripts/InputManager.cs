@@ -4,11 +4,6 @@ using UnityEngine;
 
 public class InputManager : MonoBehaviour
 {
-    [Range(0,10)]
-    public int axisCount;
-    [Range(0,20)]
-    public int buttonCount;
-
     public Controller m_controller;
 
     public void PassInput(InputData m_InputData)
@@ -18,27 +13,21 @@ public class InputManager : MonoBehaviour
     }
 }
 
+
 public struct InputData
 {
-    public float[] axes;
-    public bool[] buttons;
+    public int horizontalMove;
+    public int verticalMove;
 
-    public InputData(int axisCount, int buttonsCount)
-    {
-        axes = new float[axisCount];
-        buttons = new bool[buttonsCount];
-    }
+    public int horizontalLook;
+    public int verticalLook;
 
     public void Reset()
     {
-        for(int i = 0; i < axes.Length; i++)
-        {
-            axes[i] = 0;
-        }
-        for (int i = 0; i < buttons.Length; i++)
-        {
-            buttons[i] = false;
-        }
+        horizontalMove = 0;
+        verticalMove = 0;
+        horizontalLook = 0;
+        verticalMove = 0;
     }
 
 }

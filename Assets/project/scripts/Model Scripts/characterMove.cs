@@ -55,8 +55,7 @@ public class characterMove : MonoBehaviour
     void Update()
     {
         speed = Vector3.zero;
-
-        //Debug.Log(downAxisSpeed);
+        
         orientSelf();
         
         //get values for speed in  x z plane
@@ -66,8 +65,6 @@ public class characterMove : MonoBehaviour
         calculateGravity();
 
         m_Rigidbody.MovePosition(m_Rigidbody.position + (speed) * Time.deltaTime);
-        //Debug.Log(speed.x);
-
     }
 
     //set orient flag
@@ -99,13 +96,10 @@ public class characterMove : MonoBehaviour
         //orient oursleves to normal of current surface, and don't reorient until next contact
         if (shouldOrient)
         {
-            //downAxisSpeed = 0;
             contact = previousSurface;
-            //transform.position = contact.normal + contact.point;
             transform.rotation = Quaternion.FromToRotation(transform.up, contact.normal) * transform.rotation;
             Debug.DrawRay(transform.position, 2 * downAxis, Color.white, 2);
             shouldOrient = false;
-            //speed = transform.InverseTransformDirection(speed);
         }
     }
 
@@ -124,8 +118,7 @@ public class characterMove : MonoBehaviour
         walkingSpeed.z = zAccelerator.finalVelocity();
 
         //normalise x z movement if necessary and point them in their appropriate global direction
-
-        //Debug.Log("in caller: " + walkingSpeed.z);
+        
         speed += (transform.right * walkingSpeed.x + transform.forward * walkingSpeed.z) ;
 
     }
@@ -154,8 +147,6 @@ public class characterMove : MonoBehaviour
         effectiveGravity = downAxisSpeed * downAxis;
 
         speed += effectiveGravity;
-           
-        //effectiveGravity = transform.right * effectiveGravity.x + transform.up * effectiveGravity.y + transform.forward * effectiveGravity.z;
     }
 
     //set speed of transform in direction of object to zero

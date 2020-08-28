@@ -16,6 +16,6 @@ public abstract class Controller : MonoBehaviour
     void Awake()
     {
         m_Rigidbody = GetComponent<Rigidbody>();
-        m_Collider = GetComponent < m_Collider > ();
+        m_Collider = GetComponent <Collider > ();
     }
 }

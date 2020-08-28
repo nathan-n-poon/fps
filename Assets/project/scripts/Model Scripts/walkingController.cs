@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class walkingController : MonoBehaviour
+public class walkingController : Controller
 {
     // Start is called before the first frame update
-    public override ReadInput(InputData m_InputData)
+    public override void ReadInput(InputData m_InputData)
     {
         newInput = true;
     }
