@@ -398,7 +398,9 @@ GameObject:
   - component: {fileID: 412603445}
   - component: {fileID: 412603444}
   - component: {fileID: 412603448}
+  - component: {fileID: 412603449}
   - component: {fileID: 412603447}
+  - component: {fileID: 412603450}
   m_Layer: 0
   m_Name: Character
   m_TagString: Untagged
@@ -461,10 +463,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 412603443}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9547bb2e9247b174c8c06e974c4177fe, type: 3}
+  m_Script: {fileID: 11500000, guid: a0d51711537bfe049aeb209c90728341, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Rigidbody: {fileID: 412603445}
 --- !u!114 &412603448
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -477,11 +478,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e685aa9a524e9e40b06c6be814ba2f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Rigidbody: {fileID: 412603445}
-  Collider: {fileID: 412603444}
   gravity: 1
   skinDepth: 0
   downAxis: {x: 0, y: -1, z: 0}
+--- !u!114 &412603449
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 412603443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c9c497b862db1f4d996d1cab4aa815e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &412603450
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 412603443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb43c3f9f68d6204c93cc744e9d95fca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &555374144
 GameObject:
   m_ObjectHideFlags: 0
@@ -865,7 +888,6 @@ GameObject:
   - component: {fileID: 1008443696}
   - component: {fileID: 1008443695}
   - component: {fileID: 1008443697}
-  - component: {fileID: 1008443698}
   m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
@@ -950,22 +972,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5aa5d0740c2b154a9bcce3c5276c8dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Rigidbody: {fileID: 412603445}
-  mouseXSensitivity: 200
-  mouseYSensitivity: 200
---- !u!114 &1008443698
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1008443693}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9ce08aa283a62ff4896b3403a53932b8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Camera: {fileID: 0}
 --- !u!1 &1242168749
 GameObject:
   m_ObjectHideFlags: 0
