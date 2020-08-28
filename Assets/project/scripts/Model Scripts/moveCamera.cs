@@ -60,7 +60,7 @@ class mouseLook
 
         if (deltaRotation != Quaternion.identity)
         {
-            GameObject.FindObjectOfType<characterMove>().setWalkingSpeed(0.9f * walkingSpeed);
+            GameObject.FindObjectOfType<characterMove>().setWalkingSpeed(0.99f * walkingSpeed);
         }
     }
 }
@@ -87,6 +87,5 @@ class headBob
         {
             totalTime = 0;
         }
-        Debug.Log(transform.localPosition.y - 0.5);
     }
 }

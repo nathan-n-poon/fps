@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 
 public class InputManager : MonoBehaviour
@@ -27,12 +28,29 @@ public struct InputData
     public int horizontalLook;
     public int verticalLook;
 
+    public int jumpPressed;
+
     public void Reset()
     {
-        horizontalMove = 0;
-        verticalMove = 0;
-        horizontalLook = 0;
-        verticalLook = 0;
+        FieldInfo[] members = this.GetType().GetFields();
+
+        foreach (FieldInfo fi in members)
+        {
+            fi.SetValue(this, 0);
+        }
+    }
+
+    public bool newData()
+    {
+        int oorr = 0;
+        FieldInfo[] members = this.GetType().GetFields();
+
+        foreach (FieldInfo fi in members)
+        {
+            oorr |= (int)fi.GetValue(this);
+        }
+
+        return oorr != 0 ? true : false;
     }
 
 }

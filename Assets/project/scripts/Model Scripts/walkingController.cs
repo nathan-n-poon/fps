@@ -13,7 +13,6 @@ public class walkingController : Controller
     public override void ReadInput(InputData m_InputData)
     {
         this.m_InputData = m_InputData;
-        newData = true;
     }
 
     private void Awake()
@@ -27,10 +26,5 @@ public class walkingController : Controller
     {
         m_moveCamera.update(m_InputData);
         m_characterMove.update(m_InputData);
-        if (newData)
-        {
-            newData = false;
-            m_InputData.Reset();
-        }
     }
 }

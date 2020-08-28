@@ -7,7 +7,6 @@ public abstract class DeviceTracker : MonoBehaviour
 {
     protected InputManager m_InputManager;
     protected InputData m_InputData;
-    protected bool newData;
 
     private void Awake()
     {
