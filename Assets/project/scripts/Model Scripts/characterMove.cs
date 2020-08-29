@@ -145,11 +145,12 @@ public class characterMove : MonoBehaviour
         downAxisSpeed += gravity * Time.deltaTime;
 
         //are we on slope relative to gravity?
-        effectiveGravity = downAxis * gravity;
+        effectiveGravity = transform.InverseTransformDirection(downAxis * gravity);
         checkCollisions(ref effectiveGravity);
-        //if (isGrounded && effectiveGravity.magnitude < Mathf.Abs(gravity) / 1.5)
+        //if (isGrounded && effectiveGravity.magnitude < Mathf.Abs(2) / 1.25)
         //{
         //    downAxisSpeed *= 0.5f;
+        //    Debug.Log(effectiveGravity.magnitude);
         //}
     }
 
