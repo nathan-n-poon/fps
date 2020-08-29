@@ -15,7 +15,7 @@ public class characterMove : MonoBehaviour
     Collider Collider;
 
     //constants
-    public float gravity = 1f;
+    private float gravity = 2f;
     public float skinDepth = 0.3f;
     public Vector3 downAxis = new Vector3(0,-1,0);
     public float jumpPower = 2f;
@@ -24,8 +24,8 @@ public class characterMove : MonoBehaviour
     Vector3 relativeWalkingSpeed = Vector3.zero;
     Vector3 absoluteWalkingSpeed = Vector3.zero;
     Vector3 effectiveGravity = new Vector3();
-    Vector3 speed;
     Vector3 jumpSpeed;
+    Vector3 speed;
     float downAxisSpeed;
 
     accelerator xAccelerator;
@@ -38,6 +38,7 @@ public class characterMove : MonoBehaviour
     float xDistance;
     float yDistance;
     float zDistance;
+    bool isFloored = false;
     bool isGrounded = false;
     int touchingCount = 0;
 
@@ -64,7 +65,7 @@ public class characterMove : MonoBehaviour
         orientSelf();
         
         //get values for speed in  x z plane
-        getWalkSpeeds();
+        calculateWalkSpeeds();
 
         calculateVertical();
 
@@ -78,7 +79,8 @@ public class characterMove : MonoBehaviour
     {
         shouldOrient = true;
 
-        isGrounded = true;
+        isFloored = true;
+
         touchingCount++;
 
         int temp = other.contacts.Length - 1;
@@ -93,7 +95,7 @@ public class characterMove : MonoBehaviour
         touchingCount--;
         if(touchingCount == 0)
         {
-            isGrounded = false;
+            isFloored = false;
         }
     }
 
@@ -105,11 +107,12 @@ public class characterMove : MonoBehaviour
             contact = previousSurface;
             transform.rotation = Quaternion.FromToRotation(transform.up, contact.normal) * transform.rotation;
             Debug.DrawRay(transform.position, 2 * downAxis, Color.white, 2);
+            isGrounded = (isFloored && transform.up == -(downAxis.normalized)) ? true : false;
             shouldOrient = false;
         }
     }
 
-    void getWalkSpeeds()
+    void calculateWalkSpeeds()
     {
         xAccelerator.update(relativeWalkingSpeed.x);
         zAccelerator.update(relativeWalkingSpeed.z);
@@ -135,7 +138,7 @@ public class characterMove : MonoBehaviour
         calculateGravity();
         jump();
 
-        if (isGrounded && transform.up == -downAxis)
+        if (isGrounded)
         {
             downAxisSpeed = 0;
         }
@@ -150,7 +153,7 @@ public class characterMove : MonoBehaviour
         //are we on slope relative to gravity?
         effectiveGravity = transform.InverseTransformDirection(downAxis * gravity);
         checkCollisions(ref effectiveGravity);
-        //if (isGrounded && effectiveGravity.magnitude < Mathf.Abs(gravity) / 1.25)
+        //if (isFloored && effectiveGravity.magnitude < Mathf.Abs(gravity) / 1.25)
         //{
         //    downAxisSpeed *= 0.5f;
         //    Debug.Log(effectiveGravity.magnitude);
@@ -159,18 +162,17 @@ public class characterMove : MonoBehaviour
 
     void jump()
     {
-        if(isGrounded)
+        if(isFloored)
         {
             jumpSpeed = Vector3.zero;
         }
 
-        if (isGrounded && (m_InputData.jumpPressed == 1 ? true : false))
+        if (isFloored && (m_InputData.jumpPressed == 1 ? true : false))
         {
-            Debug.Log("uwu");
             jumpSpeed = transform.up * jumpPower / 2;
-            if(transform.up == -(downAxis.normalized) || downAxis == Vector3.zero)
+            if(isGrounded || downAxis == Vector3.zero)
             {
-                absoluteWalkingSpeed = transform.up * jumpPower;
+                jumpSpeed = transform.up * jumpPower;
             }
         }
     }
@@ -205,6 +207,11 @@ public class characterMove : MonoBehaviour
         {
             otherSpeed.z = Mathf.Max(0, otherSpeed.z);
         }
+    }
+
+    public bool getIsFloored()
+    {
+        return isFloored;
     }
 
     public bool getIsGrounded()
@@ -257,7 +264,7 @@ class accelerator
     public void accelerate(float currentDirection)
     {
         this.currentDirection = currentDirection;
-        if (currentDirection != 0 && GameObject.FindObjectOfType<characterMove>().getIsGrounded())
+        if (currentDirection != 0 && GameObject.FindObjectOfType<characterMove>().getIsFloored())
         {
             newVelocity = previousVelocity +  accel * currentDirection;
             if(Mathf.Abs(newVelocity) > maxSpeed)
@@ -269,7 +276,7 @@ class accelerator
 
     public void decelerate()
     {
-        if (GameObject.FindObjectOfType<characterMove>().getIsGrounded())
+        if (GameObject.FindObjectOfType<characterMove>().getIsFloored())
         {
             if (Mathf.Sign(newVelocity - accel * previousDirection / 2) == Mathf.Sign(newVelocity))
             {
