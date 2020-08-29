@@ -70,6 +70,7 @@ public class characterMove : MonoBehaviour
         calculateVertical();
 
         speed = absoluteWalkingSpeed + effectiveGravity + jumpSpeed;
+        Debug.Log(effectiveGravity);
 
         m_Rigidbody.MovePosition(m_Rigidbody.position + (speed) * Time.deltaTime);
     }
@@ -107,9 +108,9 @@ public class characterMove : MonoBehaviour
             contact = previousSurface;
             transform.rotation = Quaternion.FromToRotation(transform.up, contact.normal) * transform.rotation;
             Debug.DrawRay(transform.position, 2 * downAxis, Color.white, 2);
-            isGrounded = (isFloored && transform.up == -(downAxis.normalized)) ? true : false;
             shouldOrient = false;
         }
+        isGrounded = (isFloored && transform.up == -(downAxis.normalized)) ? true : false;
     }
 
     void calculateWalkSpeeds()
@@ -276,15 +277,15 @@ class accelerator
 
     public void decelerate()
     {
-        if (GameObject.FindObjectOfType<characterMove>().getIsFloored())
-        {
+        //if (GameObject.FindObjectOfType<characterMove>().getIsFloored())
+        //{
             if (Mathf.Sign(newVelocity - accel * previousDirection / 2) == Mathf.Sign(newVelocity))
             {
                 newVelocity -= accel * previousDirection / 1.5f;
             }
             else
                 newVelocity = 0;
-        }
+        //}
     }
 
     public float finalVelocity ()
