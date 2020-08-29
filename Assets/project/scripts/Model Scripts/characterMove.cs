@@ -107,6 +107,7 @@ public class characterMove : MonoBehaviour
         {
             contact = previousSurface;
             transform.rotation = Quaternion.FromToRotation(transform.up, contact.normal) * transform.rotation;
+            //transform.position = contact.point + contact.normal;
             Debug.DrawRay(transform.position, 2 * downAxis, Color.white, 2);
             shouldOrient = false;
         }
