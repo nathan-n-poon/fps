@@ -21,9 +21,11 @@ public class characterMove : MonoBehaviour
     public float jumpPower = 2f;
 
     //movement
-    Vector3 walkingSpeed = Vector3.zero;
+    Vector3 relativeWalkingSpeed = Vector3.zero;
+    Vector3 absoluteWalkingSpeed = Vector3.zero;
     Vector3 effectiveGravity = new Vector3();
     Vector3 speed;
+    Vector3 jumpSpeed;
     float downAxisSpeed;
 
     accelerator xAccelerator;
@@ -50,15 +52,14 @@ public class characterMove : MonoBehaviour
         yDistance = Collider.bounds.extents.y;
         zDistance = Collider.bounds.extents.z;
 
-        xAccelerator = new accelerator( "Horizontal");
-        zAccelerator = new accelerator("Vertical");
+        xAccelerator = new accelerator();
+        zAccelerator = new accelerator();
     }
 
     // Update is called once per frame
     public void update(InputData m_InputData)
     {
         this.m_InputData = m_InputData;
-        speed = Vector3.zero;
         
         orientSelf();
         
@@ -66,6 +67,8 @@ public class characterMove : MonoBehaviour
         getWalkSpeeds();
 
         calculateVertical();
+
+        speed = absoluteWalkingSpeed + effectiveGravity + jumpSpeed;
 
         m_Rigidbody.MovePosition(m_Rigidbody.position + (speed) * Time.deltaTime);
     }
@@ -108,8 +111,8 @@ public class characterMove : MonoBehaviour
 
     void getWalkSpeeds()
     {
-        xAccelerator.update(walkingSpeed.x);
-        zAccelerator.update(walkingSpeed.z);
+        xAccelerator.update(relativeWalkingSpeed.x);
+        zAccelerator.update(relativeWalkingSpeed.z);
 
         xAccelerator.accelerate(m_InputData.horizontalMove);
         zAccelerator.accelerate(m_InputData.verticalMove);
@@ -117,12 +120,13 @@ public class characterMove : MonoBehaviour
         xAccelerator.decelerate();
         zAccelerator.decelerate();
 
-        walkingSpeed.x = xAccelerator.finalVelocity();
-        walkingSpeed.z = zAccelerator.finalVelocity();
+        relativeWalkingSpeed.x = xAccelerator.finalVelocity();
+        relativeWalkingSpeed.z = zAccelerator.finalVelocity();
 
         //normalise x z movement if necessary and point them in their appropriate global direction
-        
-        speed += (transform.right * walkingSpeed.x + transform.forward * walkingSpeed.z) ;
+
+        Vector3 temp = (transform.right * relativeWalkingSpeed.x + transform.forward * relativeWalkingSpeed.z);
+        absoluteWalkingSpeed = temp;
 
     }
 
@@ -130,14 +134,13 @@ public class characterMove : MonoBehaviour
     {
         calculateGravity();
         jump();
+
         if (isGrounded && transform.up == -downAxis)
         {
             downAxisSpeed = 0;
         }
 
         effectiveGravity = downAxisSpeed * downAxis;
-
-        speed += effectiveGravity;
     }
 
     void calculateGravity()
@@ -147,7 +150,7 @@ public class characterMove : MonoBehaviour
         //are we on slope relative to gravity?
         effectiveGravity = transform.InverseTransformDirection(downAxis * gravity);
         checkCollisions(ref effectiveGravity);
-        //if (isGrounded && effectiveGravity.magnitude < Mathf.Abs(2) / 1.25)
+        //if (isGrounded && effectiveGravity.magnitude < Mathf.Abs(gravity) / 1.25)
         //{
         //    downAxisSpeed *= 0.5f;
         //    Debug.Log(effectiveGravity.magnitude);
@@ -156,15 +159,19 @@ public class characterMove : MonoBehaviour
 
     void jump()
     {
+        if(isGrounded)
+        {
+            jumpSpeed = Vector3.zero;
+        }
+
         if (isGrounded && (m_InputData.jumpPressed == 1 ? true : false))
         {
-            downAxisSpeed -= jumpPower;
-            if(downAxisSpeed < -0.5f)
+            Debug.Log("uwu");
+            jumpSpeed = transform.up * jumpPower / 2;
+            if(transform.up == -(downAxis.normalized) || downAxis == Vector3.zero)
             {
-                isGrounded = false;
-                Debug.Log(downAxisSpeed);
+                absoluteWalkingSpeed = transform.up * jumpPower;
             }
-            Debug.Log(jumpPower / Mathf.Abs(gravity));
         }
     }
 
@@ -207,12 +214,12 @@ public class characterMove : MonoBehaviour
 
     public Vector3 getWalkingSpeed()
     {
-        return walkingSpeed;
+        return relativeWalkingSpeed;
     }
 
     public void setWalkingSpeed(Vector3 newWalkingSpeed)
     {
-        walkingSpeed = newWalkingSpeed;
+        relativeWalkingSpeed = newWalkingSpeed;
     }
 
 }
@@ -221,7 +228,6 @@ class accelerator
 {
     Vector3 speed;
     int speedComponent;
-    string inputAxis;
 
     float previousVelocity;
     float previousDirection;
@@ -235,9 +241,9 @@ class accelerator
     float newVelocity;
 
 
-    public accelerator(string inputAxis)
+    public accelerator()
     {
-        this.inputAxis = inputAxis;
+        
     }
 
     public void update(float previousSpeed)
