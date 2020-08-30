@@ -2,18 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Collider))]
+[RequireComponent(typeof(Rigidbody))]
 public class walkingController : Controller
 {
     characterMove m_characterMove;
     moveCamera m_moveCamera;
-    InputData m_InputData;
-
-
-    // Start is called before the first frame update
-    public override void ReadInput(InputData m_InputData)
-    {
-        this.m_InputData = m_InputData;
-    }
 
     private void Awake()
     {

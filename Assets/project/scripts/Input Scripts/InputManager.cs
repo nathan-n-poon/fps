@@ -5,16 +5,26 @@ using UnityEngine;
 
 public class InputManager : MonoBehaviour
 {
-    Controller m_controller;
+    Controller main;
+
+    Controller[] weapons = new Controller[3];
 
     private void Start()
     {
-        m_controller = GetComponent<Controller>();
+        main = GetComponent<Controller>();
+        //test
+        weapons[0] = GetComponentInChildren<smg>();
+        //end test
     }
 
     public void PassInput(InputData m_InputData)
     {
-        m_controller.ReadInput(m_InputData);
+        main.ReadInput(m_InputData);
+        //foreach(Controller weapon in weapons)
+        //{
+        //    weapon.ReadInput(m_InputData);
+        //}
+        weapons[0].ReadInput(m_InputData);
 
     }
 }
@@ -29,6 +39,7 @@ public struct InputData
     public int verticalLook;
 
     public int jumpPressed;
+    public int primaryAttackPressed;
 
     public void Reset()
     {

@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Collider))]
-[RequireComponent(typeof(Rigidbody))]
 public abstract class Controller : MonoBehaviour
 {
-    public abstract void ReadInput(InputData m_InputData);
+    protected InputData m_InputData;
+
+    public void ReadInput(InputData m_InputData)
+    {
+        this.m_InputData = m_InputData;
+    }
 
     void Awake()
     {

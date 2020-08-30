@@ -70,7 +70,6 @@ public class characterMove : MonoBehaviour
         calculateVertical();
 
         speed = absoluteWalkingSpeed + effectiveGravity + jumpSpeed;
-        Debug.Log(effectiveGravity);
 
         m_Rigidbody.MovePosition(m_Rigidbody.position + (speed) * Time.deltaTime);
     }
@@ -107,7 +106,7 @@ public class characterMove : MonoBehaviour
         {
             contact = previousSurface;
             transform.rotation = Quaternion.FromToRotation(transform.up, contact.normal) * transform.rotation;
-            //transform.position = contact.point + contact.normal;
+            transform.position = contact.point + contact.normal;
             Debug.DrawRay(transform.position, 2 * downAxis, Color.white, 2);
             shouldOrient = false;
         }
