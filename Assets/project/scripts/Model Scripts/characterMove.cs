@@ -106,7 +106,9 @@ public class characterMove : MonoBehaviour
         if (shouldOrient)
         {
             contact = previousSurface;
+            Collider.isTrigger = true;
             transform.rotation = Quaternion.FromToRotation(transform.up, contact.normal) * transform.rotation;
+            Collider.isTrigger = false;
             //transform.position = contact.point + contact.normal;
             Debug.DrawRay(transform.position, 2 * downAxis, Color.white, 2);
             shouldOrient = false;
@@ -116,21 +118,14 @@ public class characterMove : MonoBehaviour
 
     void calculateWalkSpeeds()
     {
-        if(m_InputData.newData() || relativeWalkingSpeed.x)
+        if(m_InputData.horizontalMove != 0 || (relativeWalkingSpeed.x != 0))
         {
-            xAccelerator.walk();
+            relativeWalkingSpeed.x = xAccelerator.walk(relativeWalkingSpeed.x, m_InputData.horizontalMove);
         }
-        xAccelerator.update(relativeWalkingSpeed.x);
-        zAccelerator.update(relativeWalkingSpeed.z);
-
-        xAccelerator.accelerate(m_InputData.horizontalMove);
-        zAccelerator.accelerate(m_InputData.verticalMove);
-
-        xAccelerator.decelerate();
-        zAccelerator.decelerate();
-
-        relativeWalkingSpeed.x = xAccelerator.finalVelocity();
-        relativeWalkingSpeed.z = zAccelerator.finalVelocity();
+        if (m_InputData.verticalMove != 0 || (relativeWalkingSpeed.z != 0))
+        {
+            relativeWalkingSpeed.z = zAccelerator.walk(relativeWalkingSpeed.z, m_InputData.verticalMove);
+        }
 
         //normalise x z movement if necessary and point them in their appropriate global direction
 
@@ -176,8 +171,7 @@ public class characterMove : MonoBehaviour
         if (isFloored && (m_InputData.jumpPressed == 1 ? true : false))
         {
 
-            jumpSpeed = transform.up * jumpPower / 2;
-            Debug.Log(jumpSpeed);
+            jumpSpeed = transform.up * jumpPower ;
             if (isGrounded || downAxis == Vector3.zero)
             {
                 jumpSpeed = transform.up * jumpPower;
@@ -271,6 +265,7 @@ class accelerator
 
     public float accelerate(float currentDirection, float previousVelocity)
     {
+        float newVelocity = previousVelocity;
         this.currentDirection = currentDirection;
         if (currentDirection != 0 && GameObject.FindObjectOfType<characterMove>().getIsFloored())
         {
@@ -285,10 +280,10 @@ class accelerator
 
     public float decelerate(float previousVelocity)
     {
-        float newVelocity;
+        float newVelocity = previousVelocity;
         //if (GameObject.FindObjectOfType<characterMove>().getIsFloored())
         //{
-            if (Mathf.Sign(previousVelocity - accel * previousDirection / 2) == Mathf.Sign(previousVelocity))
+            if (Mathf.Sign(previousVelocity - accel * previousDirection / 1.5f) == Mathf.Sign(previousVelocity))
             {
                 newVelocity -= accel * previousDirection / 1.5f;
             }
