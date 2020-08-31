@@ -116,6 +116,10 @@ public class characterMove : MonoBehaviour
 
     void calculateWalkSpeeds()
     {
+        if(m_InputData.newData() || relativeWalkingSpeed.x)
+        {
+            xAccelerator.walk();
+        }
         xAccelerator.update(relativeWalkingSpeed.x);
         zAccelerator.update(relativeWalkingSpeed.z);
 
@@ -237,9 +241,6 @@ public class characterMove : MonoBehaviour
 
 class accelerator
 {
-    Vector3 speed;
-    int speedComponent;
-
     float previousVelocity;
     float previousDirection;
 
@@ -249,12 +250,15 @@ class accelerator
     public float maxSpeed = 6f;
     float accel;
 
-    float newVelocity;
 
-
-    public accelerator()
+    public float walk(float previousSpeed, float currentDirection)
     {
-        
+        float newVelocity;
+        update(previousSpeed);
+        newVelocity = accelerate(currentDirection, previousVelocity);
+        newVelocity = decelerate(newVelocity);
+        return newVelocity;
+
     }
 
     public void update(float previousSpeed)
@@ -265,7 +269,7 @@ class accelerator
         previousDirection = Mathf.Sign(previousVelocity);
     }
 
-    public void accelerate(float currentDirection)
+    public float accelerate(float currentDirection, float previousVelocity)
     {
         this.currentDirection = currentDirection;
         if (currentDirection != 0 && GameObject.FindObjectOfType<characterMove>().getIsFloored())
@@ -276,23 +280,22 @@ class accelerator
                 newVelocity = maxSpeed * currentDirection;
             }
         }
+        return newVelocity;
     }
 
-    public void decelerate()
+    public float decelerate(float previousVelocity)
     {
+        float newVelocity;
         //if (GameObject.FindObjectOfType<characterMove>().getIsFloored())
         //{
-            if (Mathf.Sign(newVelocity - accel * previousDirection / 2) == Mathf.Sign(newVelocity))
+            if (Mathf.Sign(previousVelocity - accel * previousDirection / 2) == Mathf.Sign(previousVelocity))
             {
                 newVelocity -= accel * previousDirection / 1.5f;
             }
             else
                 newVelocity = 0;
+        
+            return newVelocity;
         //}
-    }
-
-    public float finalVelocity ()
-    {
-        return newVelocity;
     }
 }

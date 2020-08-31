@@ -16,7 +16,7 @@ public class walkingController : Controller
         m_InputData = new InputData(); 
     }
 
-    void Update()
+    void FixedUpdate()
     {
         m_moveCamera.update(m_InputData);
         m_characterMove.update(m_InputData);
