@@ -18,7 +18,7 @@ public class characterMove : MonoBehaviour
     private float gravity = 2f;
     public float skinDepth = 0.3f;
     public Vector3 downAxis = new Vector3(0,-1,0);
-    public float jumpPower = 2f;
+    public float jumpPower = 4f;
 
     //movement
     Vector3 relativeWalkingSpeed = Vector3.zero;
@@ -60,6 +60,7 @@ public class characterMove : MonoBehaviour
     // Update is called once per frame
     public void update(InputData m_InputData)
     {
+        isFloored = isFloored | Physics.Raycast(transform.position, -transform.up, yDistance);
         this.m_InputData = m_InputData;
         
         orientSelf();
@@ -106,7 +107,7 @@ public class characterMove : MonoBehaviour
         {
             contact = previousSurface;
             transform.rotation = Quaternion.FromToRotation(transform.up, contact.normal) * transform.rotation;
-            transform.position = contact.point + contact.normal;
+            //transform.position = contact.point + contact.normal;
             Debug.DrawRay(transform.position, 2 * downAxis, Color.white, 2);
             shouldOrient = false;
         }
@@ -170,8 +171,10 @@ public class characterMove : MonoBehaviour
 
         if (isFloored && (m_InputData.jumpPressed == 1 ? true : false))
         {
+
             jumpSpeed = transform.up * jumpPower / 2;
-            if(isGrounded || downAxis == Vector3.zero)
+            Debug.Log(jumpSpeed);
+            if (isGrounded || downAxis == Vector3.zero)
             {
                 jumpSpeed = transform.up * jumpPower;
             }

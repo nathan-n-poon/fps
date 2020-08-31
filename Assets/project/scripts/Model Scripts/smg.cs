@@ -24,7 +24,7 @@ public class smg : gun
     {
         currentCooldown -= 1f;
         currentCooldown = Mathf.Max(currentCooldown, 0f);
-        Debug.Log(currentCooldown);
+        //Debug.Log(currentCooldown);
 
         if ((m_InputData.primaryAttackPressed == 1 ? true : false) && currentCooldown == 0)
         {
