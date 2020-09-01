@@ -24,6 +24,8 @@ public class KeyBoardTracker : DeviceTracker
 
         m_InputData.primaryAttackPressed = Input.GetMouseButton(0) == true ? 1 : 0;
 
+        m_InputData.interactionButtonPressed = Input.GetKey(KeyCode.F) == true ? 1 : 0;
+
         m_InputManager.PassInput(m_InputData);
         m_InputData.Reset();
         

@@ -40,6 +40,7 @@ public struct InputData
 
     public int jumpPressed;
     public int primaryAttackPressed;
+    public int interactionButtonPressed;
 
     public void Reset()
     {
