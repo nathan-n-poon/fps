@@ -46,21 +46,26 @@ class mouseLook
 
     public void update(Vector3 walkingSpeed, InputData m_InputData)
     {
-        float mouseX = m_InputData.horizontalLook * mouseXSensitivity * Time.deltaTime;
-        float mouseY = m_InputData.verticalLook * mouseYSensitivity * Time.deltaTime;
-
-        deltaRotation = Quaternion.Euler(Vector3.up * mouseX);
-
-        xRotation -= mouseY;
-        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
-
-        m_Rigidbody.MoveRotation(m_Rigidbody.rotation * deltaRotation);
-
-        transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
-
-        if (deltaRotation != Quaternion.identity)
+        if (m_InputData.horizontalLook != 0)
         {
-            GameObject.FindObjectOfType<characterMove>().setWalkingSpeed(0.99f * walkingSpeed);
+            float mouseX = m_InputData.horizontalLook * mouseXSensitivity * Time.deltaTime;
+            deltaRotation = Quaternion.Euler(Vector3.up * mouseX);
+
+            m_Rigidbody.MoveRotation(m_Rigidbody.rotation * deltaRotation);
+
+            if (deltaRotation != Quaternion.identity)
+            {
+                GameObject.FindObjectOfType<characterMove>().setWalkingSpeed(0.99f * walkingSpeed);
+            }
+        }
+        if (m_InputData.verticalLook != 0)
+        {
+            float mouseY = m_InputData.verticalLook * mouseYSensitivity * Time.deltaTime;
+
+            xRotation -= mouseY;
+            xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+
+            transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
         }
     }
 }

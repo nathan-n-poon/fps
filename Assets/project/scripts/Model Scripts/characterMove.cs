@@ -98,6 +98,10 @@ public class characterMove : MonoBehaviour
         {
             isFloored = false;
         }
+        else
+        {
+            isFloored = true;
+        }
     }
 
     void orientSelf()
@@ -170,12 +174,13 @@ public class characterMove : MonoBehaviour
 
         if (isFloored && (m_InputData.jumpPressed == 1 ? true : false))
         {
-
-            jumpSpeed = transform.up * jumpPower ;
+            jumpSpeed = transform.up * jumpPower / 1;
             if (isGrounded || downAxis == Vector3.zero)
             {
                 jumpSpeed = transform.up * jumpPower;
             }
+
+            Debug.Log(jumpSpeed);
         }
     }
 
