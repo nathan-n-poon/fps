@@ -21,7 +21,6 @@ public class smg : gun
     // Update is called once per frame
     public override void update(InputData m_InputData)
     {
-        Debug.Log("owo");
         currentCooldown -= 1f;
         currentCooldown = Mathf.Max(currentCooldown, 0f);
         //Debug.Log(currentCooldown);

@@ -117,7 +117,7 @@ public class characterMove : MonoBehaviour
             Debug.DrawRay(transform.position, 2 * downAxis, Color.white, 2);
             shouldOrient = false;
         }
-        isGrounded = (isFloored && transform.up == -(downAxis.normalized)) ? true : false;
+        isGrounded = (isFloored && contact.normal == -(downAxis.normalized)) ? true : false;
     }
 
     void calculateWalkSpeeds()
@@ -174,6 +174,7 @@ public class characterMove : MonoBehaviour
 
         if (isFloored && (m_InputData.jumpPressed == 1 ? true : false))
         {
+            Debug.Log("uwu");
             jumpSpeed = transform.up * jumpPower / 1;
             if (isGrounded || downAxis == Vector3.zero)
             {
