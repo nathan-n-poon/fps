@@ -10,9 +10,4 @@ public abstract class Controller : MonoBehaviour
     {
         this.m_InputData = m_InputData;
     }
-
-    void Awake()
-    {
-
-    }
 }

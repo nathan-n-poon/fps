@@ -10,6 +10,8 @@ public class walkingController : Controller
     moveCamera m_moveCamera;
     interactor m_interactor;
 
+    gun[] guns = new gun[3]; 
+
     private void Awake()
     {
         m_characterMove = GameObject.FindObjectOfType<characterMove>();
@@ -23,5 +25,14 @@ public class walkingController : Controller
         m_moveCamera.update(m_InputData);
         m_characterMove.update(m_InputData);
         m_interactor.update(m_InputData);
+
+        for(int i = 0; i < guns.Length; i++)
+        {
+            guns[i] = GetComponentInChildren<gun>();   
+            if(guns[i] != null)
+            {
+                guns[i].update(m_InputData);
+            }
+        }
     }
 }

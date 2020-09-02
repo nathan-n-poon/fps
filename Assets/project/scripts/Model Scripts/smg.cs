@@ -7,11 +7,10 @@ public class smg : gun
     Transform m_Transform;
     void Start()
     {
-
-
         m_Transform = transform;
-    maxCooldown = 100f;
+        maxCooldown = 100f;
         currentCooldown = maxCooldown;
+        slot = 0;
     }
 
     public override void shoot()
@@ -22,6 +21,7 @@ public class smg : gun
     // Update is called once per frame
     public override void update(InputData m_InputData)
     {
+        Debug.Log("owo");
         currentCooldown -= 1f;
         currentCooldown = Mathf.Max(currentCooldown, 0f);
         //Debug.Log(currentCooldown);

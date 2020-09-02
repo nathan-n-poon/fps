@@ -7,14 +7,9 @@ public class InputManager : MonoBehaviour
 {
     Controller main;
 
-    Controller[] weapons = new Controller[3];
-
     private void Start()
     {
         main = GetComponent<Controller>();
-        //test
-        weapons[0] = GetComponentInChildren<smg>();
-        //end test
     }
 
     public void PassInput(InputData m_InputData)
@@ -24,7 +19,6 @@ public class InputManager : MonoBehaviour
         //{
         //    weapon.ReadInput(m_InputData);
         //}
-        weapons[0].ReadInput(m_InputData);
 
     }
 }
