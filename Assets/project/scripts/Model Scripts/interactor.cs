@@ -36,6 +36,6 @@ public class interactor : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        other.GetComponentInParent<pickup>().interact(this.transform);
+        other.GetComponentInParent<interactable>().interact(this.transform);
     }
 }
