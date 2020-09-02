@@ -15,8 +15,6 @@ public class characterMove : MonoBehaviour
     Collider Collider;
 
     //constants
-    private float gravity = 2f;
-    public float skinDepth = 0.3f;
     public Vector3 downAxis = new Vector3(0,-1,0);
     public float jumpPower = 4f;
 
@@ -153,10 +151,10 @@ public class characterMove : MonoBehaviour
 
     void calculateGravity()
     {
-        downAxisSpeed += gravity * Time.deltaTime;
+        downAxisSpeed += downAxis.magnitude * Time.deltaTime;
 
         //are we on slope relative to gravity?
-        effectiveGravity = transform.InverseTransformDirection(downAxis * gravity);
+        effectiveGravity = transform.InverseTransformDirection(downAxis);
         checkCollisions(ref effectiveGravity);
         //if (isFloored && effectiveGravity.magnitude < Mathf.Abs(gravity) / 1.25)
         //{

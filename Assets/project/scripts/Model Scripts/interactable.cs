@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class pickup : MonoBehaviour
+public class interactable : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()
     {
-        gameObject.layer = LayerMask.NameToLayer("Interactable");
+        this.gameObject.layer = LayerMask.NameToLayer("Interactable");
     }
 
     public void interact(Transform otherTransform)
