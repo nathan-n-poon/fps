@@ -4,27 +4,27 @@ using UnityEngine;
 
 public class fall : MonoBehaviour
 {
-    Rigidbody m_Rigidbody;
+    protected Rigidbody m_Rigidbody;
 
-    Collider Collider;
-    ContactPoint previousSurface = new ContactPoint();
+    protected Collider Collider;
+    protected ContactPoint previousSurface = new ContactPoint();
 
-    Vector3 downAxis = new Vector3();
-    Vector3 effectiveGravity = new Vector3();
+    protected Vector3 downAxis = new Vector3();
+    protected Vector3 effectiveGravity = new Vector3();
 
-    public bool isFloored = false;
-    public bool isGrounded = false;
-    bool shouldOrient = false;
+    protected bool isFloored = false;
+    protected bool isGrounded = false;
+    protected bool shouldOrient = false;
 
-    public int touchingCount = 0;
-    float downAxisSpeed;
+    protected int touchingCount = 0;
+    protected float downAxisSpeed;
 
-    float xDistance;
-    float yDistance;
-    float zDistance;
+    protected float xDistance;
+    protected float yDistance;
+    protected float zDistance;
 
     // Start is called before the first frame update
-    void Start()
+    protected void Start()
     {
         m_Rigidbody = GetComponentInChildren<Rigidbody>();
         Collider = GetComponentInChildren<Collider>();
@@ -34,14 +34,14 @@ public class fall : MonoBehaviour
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    protected void FixedUpdate()
     {
         downAxis = gravity.downAxis;
         isGrounded = (isFloored && previousSurface.normal == -(downAxis.normalized)) ? true : false;
 
         calculateGravity();
 
-        if (isGrounded && transform.rotation.x == previousSurface.normal.x)
+        if (stopFall())
         {
             downAxisSpeed = 0;
         }
@@ -52,7 +52,7 @@ public class fall : MonoBehaviour
     }
 
     //set orient flag
-    void OnCollisionEnter(Collision other)
+    protected void OnCollisionEnter(Collision other)
     {
         shouldOrient = true;
 
@@ -67,7 +67,7 @@ public class fall : MonoBehaviour
         }
     }
 
-    void OnCollisionExit(Collision collision)
+    protected void OnCollisionExit(Collision collision)
     {
         touchingCount--;
         if (touchingCount == 0)
@@ -81,7 +81,7 @@ public class fall : MonoBehaviour
     }
 
 
-    void calculateGravity()
+    protected void calculateGravity()
     {
         downAxisSpeed += downAxis.magnitude * Time.deltaTime;
 
@@ -97,7 +97,7 @@ public class fall : MonoBehaviour
 
 
     //set speed of transform in direction of object to zero
-    void checkCollisions(ref Vector3 otherSpeed)
+    protected void checkCollisions(ref Vector3 otherSpeed)
     {
         if (Physics.Raycast(transform.position, transform.right, xDistance))
         {
@@ -151,5 +151,10 @@ public class fall : MonoBehaviour
     public void setShouldOrient(bool shouldOrient)
     {
         this.shouldOrient = shouldOrient;
+    }
+
+    public virtual bool stopFall()
+    {
+        return isGrounded;
     }
 }
