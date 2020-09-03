@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class interactable : MonoBehaviour
+public abstract class interactable : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()
@@ -10,10 +10,5 @@ public class interactable : MonoBehaviour
         this.gameObject.layer = LayerMask.NameToLayer("Interactable");
     }
 
-    public void interact(Transform otherTransform)
-    {
-        transform.SetParent(otherTransform.parent);
-        transform.localPosition = new Vector3(0.44f, -0.34f, 1.03f);
-        transform.localRotation = Quaternion.Euler(0, 0, 0);
-    }
+    public abstract void interact(Transform otherTransform);
 }

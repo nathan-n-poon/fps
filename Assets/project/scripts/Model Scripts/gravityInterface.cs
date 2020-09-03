@@ -2,8 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class gravity : interactable
+public class gravityInterface : interactable
 {
 
     public static Vector3 downAxis;
+
+    public override void interact(Transform otherTransform)
+    {
+
+    }
 }

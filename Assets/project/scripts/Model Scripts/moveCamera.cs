@@ -7,20 +7,23 @@ public class moveCamera : MonoBehaviour
     headBob headBob;
     Vector3 walkingSpeed;
     Rigidbody m_Rigidbody;
-    Camera m_Camera; 
+    Camera m_Camera;
+
+    characterMove m_characterMove;
 
     void Start()
     {
+        m_characterMove = GetComponentInParent<characterMove>();
         m_Rigidbody = transform.parent.GetComponent<Rigidbody>();
         m_Camera = GetComponent<Camera>();
 
-        mouseLook = new mouseLook(m_Rigidbody, transform);
+        mouseLook = new mouseLook(m_Rigidbody, transform, m_characterMove);
         headBob = new headBob(m_Camera, transform);
     }
 
     public void update(InputData m_InputData)
     {
-        walkingSpeed = GameObject.FindObjectOfType<characterMove>().getWalkingSpeed();
+        walkingSpeed = m_characterMove.getWalkingSpeed();
         mouseLook.update(walkingSpeed, m_InputData);
         headBob.update(walkingSpeed);
     }
@@ -36,12 +39,14 @@ class mouseLook
     float xRotation = 0f;
     public float mouseXSensitivity = 100f;
     public float mouseYSensitivity = 100f;
+    characterMove m_characterMove;
 
-    public mouseLook(Rigidbody m_Rigidbody, Transform transform)
+    public mouseLook(Rigidbody m_Rigidbody, Transform transform, characterMove m_characterMove)
     {
         Cursor.lockState = CursorLockMode.Locked;
         this.m_Rigidbody = m_Rigidbody;
         this.transform = transform;
+        this.m_characterMove = m_characterMove;
     }
 
     public void update(Vector3 walkingSpeed, InputData m_InputData)
@@ -55,7 +60,7 @@ class mouseLook
 
             if (deltaRotation != Quaternion.identity)
             {
-                GameObject.FindObjectOfType<characterMove>().setWalkingSpeed(0.99f * walkingSpeed);
+                m_characterMove.setWalkingSpeed(0.99f * walkingSpeed);
             }
         }
         if (m_InputData.verticalLook != 0)

@@ -14,9 +14,9 @@ public class walkingController : Controller
 
     private void Awake()
     {
-        m_characterMove = GameObject.FindObjectOfType<characterMove>();
-        m_moveCamera = GameObject.FindObjectOfType<moveCamera>();
-        m_interactor = GameObject.FindObjectOfType<interactor>();
+        m_characterMove = GetComponent<characterMove>();
+        m_moveCamera = GetComponentInChildren<moveCamera>();
+        m_interactor = GetComponentInChildren<interactor>();
         m_InputData = new InputData(); 
     }
 
