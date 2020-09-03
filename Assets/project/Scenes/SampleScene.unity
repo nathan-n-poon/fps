@@ -304,9 +304,9 @@ GameObject:
   - component: {fileID: 65124589}
   - component: {fileID: 65124590}
   - component: {fileID: 65124591}
-  - component: {fileID: 65124592}
   - component: {fileID: 65124594}
   - component: {fileID: 65124593}
+  - component: {fileID: 65124592}
   m_Layer: 9
   m_Name: Gun
   m_TagString: Untagged
@@ -362,12 +362,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 65124588}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 94f93730c3c5b7846b83dc7a803773c8, type: 3}
+  m_Script: {fileID: 11500000, guid: d8dd84d539e30a94d8ccbe4c6ce4da37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isFloored: 0
-  isGrounded: 0
-  touchingCount: 0
 --- !u!65 &65124593
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -620,9 +617,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94f93730c3c5b7846b83dc7a803773c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isFloored: 0
-  isGrounded: 0
-  touchingCount: 0
 --- !u!1 &418389022
 GameObject:
   m_ObjectHideFlags: 0

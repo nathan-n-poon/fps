@@ -21,6 +21,11 @@ public class InputManager : MonoBehaviour
         //}
 
     }
+
+    public void setController(Controller newController)
+    {
+        main = newController;
+    }
 }
 
 
