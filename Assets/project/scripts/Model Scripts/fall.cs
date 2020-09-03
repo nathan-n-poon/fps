@@ -41,7 +41,7 @@ public class fall : MonoBehaviour
 
         calculateGravity();
 
-        if (isGrounded)
+        if (isGrounded && transform.rotation.x == previousSurface.normal.x)
         {
             downAxisSpeed = 0;
         }
