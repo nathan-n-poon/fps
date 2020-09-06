@@ -21,15 +21,17 @@ public abstract class accelerator
             return 0;
         }
 
-        float newVelocity = previousVelocity;
+        this.currentDirection = currentDirection;
+
+        float newVelocity;
         update(previousSpeed);
-        if(currentDirection != 0)
+        if(currentDirection != 0 && isFloored)
         {
-            newVelocity = accelerate(currentDirection, previousVelocity, isFloored);
+            newVelocity = accelerate(currentDirection, previousVelocity);
         }
         else
         {
-            newVelocity = decelerate(newVelocity);
+            newVelocity = decelerate(previousVelocity);
         }
         return newVelocity;
 }
@@ -41,7 +43,7 @@ public abstract class accelerator
         previousDirection = Mathf.Sign(previousVelocity);
     }
 
-    public abstract float accelerate(float currentDirection, float previousVelocity, bool isFloored);
+    public abstract float accelerate(float currentDirection, float previousVelocity);
 
     public abstract float decelerate(float previousVelocity);
 }

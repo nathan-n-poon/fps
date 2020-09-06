@@ -22,7 +22,7 @@ public class characterMove : MonoBehaviour
     Vector3 relativeWalkingSpeed = Vector3.zero;
     Vector3 absoluteWalkingSpeed = Vector3.zero;
     Vector3 jumpSpeed;
-    Vector3 speed;
+    public Vector3 speed;
 
     accelerator xAccelerator;
     accelerator zAccelerator;

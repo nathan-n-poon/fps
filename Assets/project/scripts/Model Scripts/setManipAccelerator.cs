@@ -14,7 +14,7 @@ public class setManipAccelerator : accelerator
         throw new System.NotImplementedException();
     }
 
-    public override float accelerate(float currentDirection, float previousVelocity, bool isFloored)
+    public override float accelerate(float currentDirection, float previousVelocity)
     {
         throw new System.NotImplementedException();
     }

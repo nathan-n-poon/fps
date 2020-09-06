@@ -10,7 +10,7 @@ public class fall : MonoBehaviour
     protected ContactPoint previousSurface = new ContactPoint();
 
     protected Vector3 downAxis = new Vector3();
-    protected Vector3 effectiveGravity = new Vector3();
+    public Vector3 effectiveGravity = new Vector3();
 
     protected bool isFloored = false;
     protected bool isGrounded = false;
@@ -86,8 +86,8 @@ public class fall : MonoBehaviour
         downAxisSpeed += downAxis.magnitude * Time.deltaTime;
 
         //are we on slope relative to gravity?
-        effectiveGravity = transform.InverseTransformDirection(downAxis);
-        checkCollisions(ref effectiveGravity);
+        //effectiveGravity = transform.InverseTransformDirection(downAxis);
+        //checkCollisions(ref effectiveGravity);
         //if (isFloored && effectiveGravity.magnitude < Mathf.Abs(gravity) / 1.25)
         //{
         //    downAxisSpeed *= 0.5f;

@@ -8,20 +8,16 @@ public class walkingAccelerator : accelerator
     {
         this.perSecondAccel = 3f;
         this.maxSpeed = 6f;
-        this.decelerationFactor = 1.5f;
+        this.decelerationFactor = 2f;
     }
 
-    public override float accelerate(float currentDirection, float previousVelocity, bool isFloored)
+    public override float accelerate(float currentDirection, float previousVelocity)
     {
         float newVelocity = previousVelocity;
-        this.currentDirection = currentDirection;
-        if (isFloored)
+        newVelocity = previousVelocity + instantaneousAccel * currentDirection;
+        if (Mathf.Abs(newVelocity) > maxSpeed)
         {
-            newVelocity = previousVelocity + instantaneousAccel * currentDirection;
-            if (Mathf.Abs(newVelocity) > maxSpeed)
-            {
-                newVelocity = maxSpeed * currentDirection;
-            }
+            newVelocity = maxSpeed * currentDirection;
         }
         return newVelocity;
     }

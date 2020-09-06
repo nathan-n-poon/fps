@@ -60,7 +60,7 @@ class mouseLook
 
             if (deltaRotation != Quaternion.identity)
             {
-                m_characterMove.setWalkingSpeed(0.99f * walkingSpeed);
+                m_characterMove.setWalkingSpeed(0.9f * walkingSpeed);
             }
         }
         if (m_InputData.verticalLook != 0)
