@@ -9,13 +9,37 @@ public abstract class accelerator
 
     protected float currentDirection;
 
-    protected float walkAccel;
     protected float maxSpeed;
-    protected float accel;
+    protected float perSecondAccel;
+    protected float decelerationFactor;
+    protected float instantaneousAccel;
 
-    public abstract float move(float previousSpeed, float currentDirection, bool isFloored);
+    public virtual float move(float previousSpeed, float currentDirection, bool isFloored)
+    {
+        if(previousSpeed == 0 && currentDirection == 0)
+        {
+            return 0;
+        }
 
-    public abstract void update(float previousSpeed);
+        float newVelocity = previousVelocity;
+        update(previousSpeed);
+        if(currentDirection != 0)
+        {
+            newVelocity = accelerate(currentDirection, previousVelocity, isFloored);
+        }
+        else
+        {
+            newVelocity = decelerate(newVelocity);
+        }
+        return newVelocity;
+}
+
+    public void update(float previousSpeed)
+    {
+        instantaneousAccel = perSecondAccel * Time.deltaTime;
+        previousVelocity = previousSpeed;
+        previousDirection = Mathf.Sign(previousVelocity);
+    }
 
     public abstract float accelerate(float currentDirection, float previousVelocity, bool isFloored);
 

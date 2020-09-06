@@ -83,14 +83,9 @@ public class characterMove : MonoBehaviour
 
     void calculateWalkSpeeds()
     {
-        if(m_InputData.horizontalMove != 0 || (relativeWalkingSpeed.x != 0))
-        {
-            relativeWalkingSpeed.x = xAccelerator.move(relativeWalkingSpeed.x, m_InputData.horizontalMove, m_fall.getIsFloored());
-        }
-        if (m_InputData.verticalMove != 0 || (relativeWalkingSpeed.z != 0))
-        {
-            relativeWalkingSpeed.z = zAccelerator.move(relativeWalkingSpeed.z, m_InputData.verticalMove, m_fall.getIsFloored());
-        }
+        relativeWalkingSpeed.x = xAccelerator.move(relativeWalkingSpeed.x, m_InputData.horizontalMove, m_fall.getIsFloored());
+
+        relativeWalkingSpeed.z = zAccelerator.move(relativeWalkingSpeed.z, m_InputData.verticalMove, m_fall.getIsFloored());
 
         //normalise x z movement if necessary and point them in their appropriate global direction
 
