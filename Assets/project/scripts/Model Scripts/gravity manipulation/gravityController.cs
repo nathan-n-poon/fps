@@ -10,11 +10,12 @@ public class gravityController : Controller
     void Start()
     {
         this.disableCamera();
+        m_setGravity = gameObject.GetComponent<setGravity>();
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        
+        m_setGravity.update(m_InputData);
     }
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 public abstract class Controller : MonoBehaviour
 {
     protected InputData m_InputData;
-    protected Camera m_Camera;
+    Camera m_Camera;
 
     void Awake()
     {

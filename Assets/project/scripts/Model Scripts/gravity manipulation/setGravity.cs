@@ -22,7 +22,7 @@ public class setGravity : MonoBehaviour
     }
 
     // Update is called once per frame
-    void update(InputData m_InputData)
+    public void update(InputData m_InputData)
     {
         this.m_InputData = m_InputData;
 
