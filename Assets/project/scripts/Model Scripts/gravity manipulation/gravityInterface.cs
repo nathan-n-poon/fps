@@ -14,6 +14,6 @@ public class gravityInterface : interactable
 
     public override void interact(Transform otherTransform)
     {
-        otherTransform.parent.GetComponent<InputManager>().setController(m_gravityController);
+        otherTransform.parent.parent.GetComponent<controllerSwitcher>().switchControllers(m_gravityController);
     }
 }

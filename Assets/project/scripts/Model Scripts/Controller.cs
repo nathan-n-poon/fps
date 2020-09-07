@@ -5,6 +5,22 @@ using UnityEngine;
 public abstract class Controller : MonoBehaviour
 {
     protected InputData m_InputData;
+    protected Camera m_Camera;
+
+    void Awake()
+    {
+        m_Camera = gameObject.GetComponentInChildren<Camera>();
+    }
+
+    public void enableCamera()
+    {
+        m_Camera.enabled = true;
+    }
+
+    public void disableCamera()
+    {
+        m_Camera.enabled = false;
+    }
 
     public void ReadInput(InputData m_InputData)
     {
