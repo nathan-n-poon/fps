@@ -9,6 +9,8 @@ public abstract class accelerator
 
     protected float currentDirection;
 
+    protected bool isFloored;
+
     protected float maxSpeed;
     protected float perSecondAccel;
     protected float decelerationFactor;
@@ -22,10 +24,11 @@ public abstract class accelerator
         }
 
         this.currentDirection = currentDirection;
+        this.isFloored = isFloored;
 
         float newVelocity;
         update(previousSpeed);
-        if(currentDirection != 0 && isFloored)
+        if(currentDirection != 0 && additionalAccelerateConditions())
         {
             newVelocity = accelerate(currentDirection, previousVelocity);
         }
@@ -46,4 +49,9 @@ public abstract class accelerator
     public abstract float accelerate(float currentDirection, float previousVelocity);
 
     public abstract float decelerate(float previousVelocity);
+
+    protected virtual bool additionalAccelerateConditions()
+    {
+        return true;
+    }
 }

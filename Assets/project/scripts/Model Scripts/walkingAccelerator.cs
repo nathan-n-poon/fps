@@ -14,6 +14,7 @@ public class walkingAccelerator : accelerator
     public override float accelerate(float currentDirection, float previousVelocity)
     {
         float newVelocity = previousVelocity;
+  
         newVelocity = previousVelocity + instantaneousAccel * currentDirection;
         if (Mathf.Abs(newVelocity) > maxSpeed)
         {
@@ -36,6 +37,11 @@ public class walkingAccelerator : accelerator
 
         return newVelocity;
         //}
+    }
+
+    protected override bool additionalAccelerateConditions()
+    {
+        return this.isFloored;
     }
 
 }

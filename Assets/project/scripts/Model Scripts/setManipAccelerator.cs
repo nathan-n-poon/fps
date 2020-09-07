@@ -6,21 +6,16 @@ public class setManipAccelerator : accelerator
 {
     public setManipAccelerator()
     {
-
-    }
-
-    public override float move(float previousSpeed, float currentDirection, bool isFloored)
-    {
-        throw new System.NotImplementedException();
+        this.maxSpeed = 0.2f;
     }
 
     public override float accelerate(float currentDirection, float previousVelocity)
     {
-        throw new System.NotImplementedException();
+        return maxSpeed;
     }
 
     public override float decelerate(float previousVelocity)
     {
-        throw new System.NotImplementedException();
+        return 0f;
     }
 }
