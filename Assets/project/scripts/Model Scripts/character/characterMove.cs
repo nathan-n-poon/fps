@@ -41,8 +41,8 @@ public class characterMove : MonoBehaviour
         Collider = GetComponent<Collider>();
         transform.rotation = Quaternion.Euler(0, 90, 0);
 
-        xAccelerator = new accelerator(m_fall);
-        zAccelerator = new accelerator(m_fall);
+        xAccelerator = new walkingAccelerator();
+        zAccelerator = new walkingAccelerator();
     }
 
     // Update is called once per frame
@@ -83,14 +83,9 @@ public class characterMove : MonoBehaviour
 
     void calculateWalkSpeeds()
     {
-        if(m_InputData.horizontalMove != 0 || (relativeWalkingSpeed.x != 0))
-        {
-            relativeWalkingSpeed.x = xAccelerator.walk(relativeWalkingSpeed.x, m_InputData.horizontalMove);
-        }
-        if (m_InputData.verticalMove != 0 || (relativeWalkingSpeed.z != 0))
-        {
-            relativeWalkingSpeed.z = zAccelerator.walk(relativeWalkingSpeed.z, m_InputData.verticalMove);
-        }
+        relativeWalkingSpeed.x = xAccelerator.move(relativeWalkingSpeed.x, m_InputData.horizontalMove, m_fall.getIsFloored());
+
+        relativeWalkingSpeed.z = zAccelerator.move(relativeWalkingSpeed.z, m_InputData.verticalMove, m_fall.getIsFloored());
 
         //normalise x z movement if necessary and point them in their appropriate global direction
 
@@ -135,73 +130,4 @@ public class characterMove : MonoBehaviour
         relativeWalkingSpeed = newWalkingSpeed;
     }
 
-}
-
-class accelerator
-{
-    float previousVelocity;
-    float previousDirection;
-
-    float currentDirection;
-
-    float walkAccel = 3f;
-    public float maxSpeed = 6f;
-    float accel;
-
-    fall m_fall;
-
-
-    public accelerator(fall m_fall)
-    {
-        this.m_fall = m_fall;
-    }
-
-    public float walk(float previousSpeed, float currentDirection)
-    {
-        float newVelocity;
-        update(previousSpeed);
-        newVelocity = accelerate(currentDirection, previousVelocity);
-        newVelocity = decelerate(newVelocity);
-        return newVelocity;
-
-    }
-
-    public void update(float previousSpeed)
-    {
-
-        accel = walkAccel * Time.deltaTime;
-        previousVelocity = previousSpeed;
-        previousDirection = Mathf.Sign(previousVelocity);
-    }
-
-    public float accelerate(float currentDirection, float previousVelocity)
-    {
-        float newVelocity = previousVelocity;
-        this.currentDirection = currentDirection;
-        if (currentDirection != 0 && m_fall.getIsFloored())
-        {
-            newVelocity = previousVelocity +  accel * currentDirection;
-            if(Mathf.Abs(newVelocity) > maxSpeed)
-            {
-                newVelocity = maxSpeed * currentDirection;
-            }
-        }
-        return newVelocity;
-    }
-
-    public float decelerate(float previousVelocity)
-    {
-        float newVelocity = previousVelocity;
-        //if (GameObject.FindObjectOfType<characterMove>().getIsFloored())
-        //{
-            if (Mathf.Sign(previousVelocity - accel * previousDirection / 1.5f) == Mathf.Sign(previousVelocity))
-            {
-                newVelocity -= accel * previousDirection / 1.5f;
-            }
-            else
-                newVelocity = 0;
-        
-            return newVelocity;
-        //}
-    }
 }

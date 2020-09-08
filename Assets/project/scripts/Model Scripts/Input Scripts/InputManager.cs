@@ -21,6 +21,11 @@ public class InputManager : MonoBehaviour
         //}
 
     }
+
+    public void setController(Controller newController)
+    {
+        main = newController;
+    }
 }
 
 
@@ -33,7 +38,7 @@ public struct InputData
     public int verticalLook;
 
     public int jumpPressed;
-    public int primaryAttackPressed;
+    public int mouseButton;
     public int interactionButtonPressed;
 
     public void Reset()

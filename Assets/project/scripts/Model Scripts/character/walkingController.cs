@@ -12,7 +12,7 @@ public class walkingController : Controller
 
     gun[] guns = new gun[3]; 
 
-    private void Awake()
+    private void Start()
     {
         m_characterMove = GetComponent<characterMove>();
         m_moveCamera = GetComponentInChildren<moveCamera>();
