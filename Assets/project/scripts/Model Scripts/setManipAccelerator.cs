@@ -11,7 +11,7 @@ public class setManipAccelerator : accelerator
 
     public override float accelerate(float currentDirection, float previousVelocity)
     {
-        return maxSpeed;
+        return maxSpeed * currentDirection;
     }
 
     public override float decelerate(float previousVelocity)

@@ -6,6 +6,10 @@ public class setGravity : MonoBehaviour
 {
     InputData m_InputData;
     Vector3 speed;
+    Vector3 baseOffset;
+
+    float bounds = 0.3f;
+    float boundsScale;
 
     accelerator xAccelerator;
     accelerator yAccelerator;
@@ -14,7 +18,9 @@ public class setGravity : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        boundsScale = gravity.maxGs / bounds;
         transform.localPosition = new Vector3(0, 0, 0);
+        baseOffset = transform.localPosition;
 
         xAccelerator = new setManipAccelerator();
         yAccelerator = new setManipAccelerator();
@@ -30,7 +36,14 @@ public class setGravity : MonoBehaviour
 
         speed *= Time.deltaTime;
 
-        transform.localPosition = new Vector3(Mathf.Min(transform.localPosition.x + speed.x, 4.5f), Mathf.Min(transform.localPosition.y + speed.y, 4.5f), Mathf.Min(transform.localPosition.z + speed.z, 4.5f));
+        if(speed != Vector3.zero)
+        {
+            transform.localPosition = new Vector3(Mathf.Clamp(transform.localPosition.x + speed.x, -bounds, bounds),
+                                                  Mathf.Clamp(transform.localPosition.y + speed.y, -bounds, bounds), 
+                                                  Mathf.Clamp(transform.localPosition.z + speed.z, -bounds, bounds));
+            gravity.downAxis = boundsScale * (transform.localPosition - baseOffset);
+            Debug.Log(transform.localPosition.y);
+        }        
     }//
 
     void calculateSpeed()
@@ -38,5 +51,8 @@ public class setGravity : MonoBehaviour
         speed.x = xAccelerator.move(0, m_InputData.horizontalMove, false);
         speed.y = yAccelerator.move(0, m_InputData.mouseButton, false);
         speed.z = zAccelerator.move(0, m_InputData.verticalMove, false);
+
+        Vector3 temp = speed.x * transform.right + speed.y * transform.up + speed.z * transform.forward;
+        speed = temp / boundsScale * 2;
     }
 }
