@@ -5,5 +5,5 @@ using UnityEngine;
 public static class gravity 
 {
     public static float maxGs = 9f;
-    public static Vector3 downAxis = new Vector3(0f, -1f, 0f);
+    public static Vector3 downAxis = new Vector3(0f, -1.5f, 0f);
 }
