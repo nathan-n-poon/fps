@@ -31,7 +31,7 @@ public class setGravity : MonoBehaviour
         speed *= Time.deltaTime;
 
         transform.localPosition = new Vector3(Mathf.Min(transform.localPosition.x + speed.x, 4.5f), Mathf.Min(transform.localPosition.y + speed.y, 4.5f), Mathf.Min(transform.localPosition.z + speed.z, 4.5f));
-    }
+    }//
 
     void calculateSpeed()
     {
