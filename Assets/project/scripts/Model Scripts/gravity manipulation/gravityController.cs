@@ -11,6 +11,7 @@ public class gravityController : Controller
     {
         m_setGravity = gameObject.GetComponentInChildren<setGravity>();
         this.enabled = false;
+        this.m_Camera.enabled = false;
     }
 
     // Update is called once per frame

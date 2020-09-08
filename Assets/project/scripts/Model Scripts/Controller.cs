@@ -10,6 +10,7 @@ public abstract class Controller : MonoBehaviour
     void Awake()
     {
         m_Camera = gameObject.GetComponentInChildren<Camera>();
+        Debug.Log(m_Camera);
     }
 
     public void ReadInput(InputData m_InputData)
