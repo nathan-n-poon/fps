@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class controllerSwitcher : MonoBehaviour
 {
@@ -12,22 +10,31 @@ public class controllerSwitcher : MonoBehaviour
     {
         m_InputManager = gameObject.GetComponent<InputManager>();
         oldController = gameObject.GetComponent<Controller>();
+        Debug.Log(oldController);
     }
 
     public void switchControllers(Controller newController)
     {
+
         oldController.disableCamera();
-        m_InputManager.setController(newController);
+        oldController.enabled = false;
+
+        newController.enabled = true;
         newController.enableCamera();
 
+        m_InputManager.setController(newController);
         this.newController = newController;
     }
 
     public void switchBackControllers()
     {
-        this.newController.disableCamera();
-        m_InputManager.setController(oldController);
+        newController.disableCamera();
+        newController.enabled = false;
+
+        oldController.enabled = true;
         oldController.enableCamera();
+
+        m_InputManager.setController(oldController);
     }
 
 }

@@ -5,11 +5,16 @@ using UnityEngine;
 public abstract class Controller : MonoBehaviour
 {
     protected InputData m_InputData;
-    Camera m_Camera;
+    public Camera m_Camera;
 
     void Awake()
     {
         m_Camera = gameObject.GetComponentInChildren<Camera>();
+    }
+
+    public void ReadInput(InputData m_InputData)
+    {
+        this.m_InputData = m_InputData;
     }
 
     public void enableCamera()
@@ -19,11 +24,8 @@ public abstract class Controller : MonoBehaviour
 
     public void disableCamera()
     {
+        Debug.Log(m_Camera);
         m_Camera.enabled = false;
     }
 
-    public void ReadInput(InputData m_InputData)
-    {
-        this.m_InputData = m_InputData;
-    }
 }

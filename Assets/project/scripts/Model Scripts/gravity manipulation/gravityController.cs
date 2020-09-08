@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class gravityController : Controller
 {
-    setGravity m_setGravity;
+    public setGravity m_setGravity;
 
     // Start is called before the first frame update
     void Start()
     {
-        this.disableCamera();
-        m_setGravity = gameObject.GetComponent<setGravity>();
+        m_setGravity = gameObject.GetComponentInChildren<setGravity>();
+        this.enabled = false;
     }
 
     // Update is called once per frame

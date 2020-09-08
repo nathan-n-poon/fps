@@ -7,9 +7,9 @@ public class gravityInterface : interactable
     gravityController m_gravityController;
     public static Vector3 downAxis;
 
-    void Start()
+    void Awake()
     {
-        m_gravityController = GetComponent<gravityController>();
+        m_gravityController = GetComponentInChildren<gravityController>();
     }
 
     public override void interact(Transform otherTransform)
