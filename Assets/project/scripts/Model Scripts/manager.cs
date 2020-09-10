@@ -5,15 +5,17 @@ using Photon.Pun;
 
 public class manager : MonoBehaviour
 {
-    public string playerPrefab;
+    string playerPrefab = "Character";
+    Transform spawnTransform;
 
     private void Start()
     {
+        spawnTransform = gameObject.GetComponent<Transform>();
         spawn();
     }
 
     public void spawn()
     {
-        PhotonNetwork.Instantiate()
+        PhotonNetwork.Instantiate("Character", spawnTransform.position, spawnTransform.rotation);
     }
 }
