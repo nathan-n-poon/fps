@@ -23,7 +23,6 @@ public class smg : gun
     {
         currentCooldown -= 1f;
         currentCooldown = Mathf.Max(currentCooldown, 0f);
-        //Debug.Log(currentCooldown);
 
         if ((m_InputData.mouseButton == 1 ? true : false) && currentCooldown == 0)
         {

@@ -115,7 +115,6 @@ public class fall : MonoBehaviour
         if (Physics.Raycast(transform.position, -transform.up, yDistance))
         {
             otherSpeed.y = Mathf.Max(0, otherSpeed.y);
-            //Debug.Log("wrong");
         }
 
         if (Physics.Raycast(transform.position, transform.forward, zDistance))

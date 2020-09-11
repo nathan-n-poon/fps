@@ -109,7 +109,6 @@ public class characterMove : MonoBehaviour
 
         if (m_fall.getIsFloored() && (m_InputData.jumpPressed == 1 ? true : false))
         {
-            Debug.Log("uwu");
             jumpSpeed = transform.up * jumpPower * 2;
             if (m_fall.getIsGrounded() || downAxis == Vector3.zero)
             {

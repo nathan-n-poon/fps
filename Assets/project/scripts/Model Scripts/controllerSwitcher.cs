@@ -10,7 +10,6 @@ public class controllerSwitcher : MonoBehaviour
     {
         m_InputManager = gameObject.GetComponent<InputManager>();
         oldController = gameObject.GetComponent<Controller>();
-        Debug.Log(oldController);
     }
 
     public void switchControllers(Controller newController)

@@ -7,6 +7,7 @@ public class launcher : MonoBehaviourPunCallbacks
 {
     public void Awake()
     {
+        Screen.SetResolution(1000, 500, false);
         PhotonNetwork.AutomaticallySyncScene = true;
         connect();
     }

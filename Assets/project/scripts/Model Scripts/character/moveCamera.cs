@@ -23,6 +23,7 @@ public class moveCamera : MonoBehaviour
 
     public void update(InputData m_InputData)
     {
+        Debug.Log(m_characterMove);
         walkingSpeed = m_characterMove.getWalkingSpeed();
         mouseLook.update(walkingSpeed, m_InputData);
         headBob.update(walkingSpeed);

@@ -42,7 +42,6 @@ public class setGravity : MonoBehaviour
                                                   Mathf.Clamp(transform.localPosition.y + speed.y, -bounds, bounds), 
                                                   Mathf.Clamp(transform.localPosition.z + speed.z, -bounds, bounds));
             gravity.downAxis = boundsScale * (transform.localPosition - baseOffset);
-            Debug.Log(transform.localPosition.y);
         }        
     }//
 
