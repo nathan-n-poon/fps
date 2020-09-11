@@ -14,6 +14,7 @@ public class KeyBoardTracker : DeviceTracker
     // Update is called once per frame
     void Update()
     {
+        if (!photonView.IsMine) return;
         m_InputData.horizontalMove = (int)getAxisDirection(KeyCode.A, KeyCode.D);
         m_InputData.verticalMove = (int)getAxisDirection(KeyCode.S, KeyCode.W);
 
